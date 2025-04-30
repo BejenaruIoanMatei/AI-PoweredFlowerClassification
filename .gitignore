@@ -1,0 +1,28 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Visual Studio Code
+.vscode/
+
+# Alte fișiere temporare
+*.bak
+*.swp
+*~
+todo.md
+
+# Settings.py
+licenta_project/licenta_project/settings.py
