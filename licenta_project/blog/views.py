@@ -16,6 +16,11 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
+class ClassifierView(ListView):
+    model = Post
+    template_name = 'blog/classifier.html'
+    context_object_name = 'posts'
+
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'
