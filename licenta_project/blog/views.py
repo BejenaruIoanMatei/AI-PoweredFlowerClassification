@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
-from .models import Post
+from django.urls import reverse_lazy
+from .models import Post, ImageClassification
+from .forms import ImageUploadForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (ListView, 
                                   DetailView, 
@@ -16,11 +18,26 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
-class ClassifierView(ListView):
-    model = Post
+class ClassifierView(LoginRequiredMixin, CreateView):
+    model = ImageClassification
+    form_class = ImageUploadForm
     template_name = 'blog/classifier.html'
-    context_object_name = 'posts'
+    success_url = reverse_lazy('blog-classifier')  # evită eroarea de redirect
 
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+def classifier_view(request):
+    label = None
+    if request.method == "POST":
+        # salvezi imaginea aici, sau doar dummy logic
+        form = 'Ceva'
+        label = "Cat"  # Dummy label, ulterior înlocuiești cu outputul real
+    return render(request, 'blog/classifier.html', {'form': form, 'label': label})
+
+    
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'

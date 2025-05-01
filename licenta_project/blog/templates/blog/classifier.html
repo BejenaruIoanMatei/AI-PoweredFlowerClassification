@@ -1,3 +1,38 @@
-{%extends "blog/base.html"%} {%block content%}
-<h1>Classifier Page !</h1>
-{%endblock content%}
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}  <!-- Adaugă această linie -->
+
+{% block content %}
+<div class="text-center mt-5">
+  <h3>Upload Image</h3>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mt-2">Upload</button>
+  </form>
+
+  <!-- Buton care declanșează popup-ul -->
+  <button type="button" class="btn btn-success mt-4" data-toggle="modal" data-target="#verifyModal">
+    Verify
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verifyModalLabel">Classification Result</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ✅ Eticheta clasificată: <strong>Dog</strong> <!-- Dummy label -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
