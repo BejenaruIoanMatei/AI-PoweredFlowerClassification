@@ -23,6 +23,7 @@ ENV/
 *.swp
 *~
 todo.md
+ideas.md
 
 # Settings.py
 licenta_project/licenta_project/settings.py
