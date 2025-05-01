@@ -29,5 +29,10 @@
     <h2 class="article-title">{{ object.title }}</h2>
     <p class="article-content">{{ object.content }}</p>
   </div>
+  {% if post.image_post %}
+  <div style="margin-left: 20px;">
+    <img class="img-thumbnail" src="{{ post.image_post.url }}" style="max-width: 300px;" />
+  </div>
+{% endif %}
 </article>
 {%endblock content%}

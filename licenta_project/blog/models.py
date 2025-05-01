@@ -21,7 +21,7 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         try:
-            img = Image.open(self.image.path)
+            img = Image.open(self.image_post.path)
             
             if img.mode != "RGB":
                 img = img.convert("RGB")
@@ -29,7 +29,7 @@ class Post(models.Model):
             if img.height > 400 or img.width > 400:
                 output_size = (400,400)
                 img.thumbnail(output_size)
-                img.save(self.image.path)
+                img.save(self.image_post.path)
                 
         except UnidentifiedImageError:
-            print(f"Could not identify image at {self.image.path}")
+            print(f"Could not identify image at {self.image_post.path}")
