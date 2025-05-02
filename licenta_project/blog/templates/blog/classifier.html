@@ -1,5 +1,5 @@
 {% extends "blog/base.html" %}
-{% load crispy_forms_tags %}  <!-- Adaugă această linie -->
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="text-center mt-5">
@@ -10,7 +10,13 @@
     <button type="submit" class="btn btn-primary mt-2">Upload</button>
   </form>
 
-  <!-- Buton care declanșează popup-ul -->
+  {% if classifier %}
+    <div class="mt-4">
+        <h5>Your last upload:</h5>
+        <img class="img-thumbnail" src="{{ classifier.image.url }}" style="max-width: 300px;" />
+    </div>
+  {% endif %}
+
   <button type="button" class="btn btn-success mt-4" data-toggle="modal" data-target="#verifyModal">
     Verify
   </button>
@@ -27,7 +33,11 @@
         </button>
       </div>
       <div class="modal-body">
-        ✅ Eticheta clasificată: <strong>Dog</strong> <!-- Dummy label -->
+        ✅ Eticheta clasificată: <strong>{{ classifier.predicted_label|default:"-" }}</strong>
+      </div>
+      <div class="modal-body">
+        Want to share it on the blog ?
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Share</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

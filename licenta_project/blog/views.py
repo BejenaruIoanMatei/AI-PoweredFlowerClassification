@@ -22,20 +22,29 @@ class ClassifierView(LoginRequiredMixin, CreateView):
     model = ImageClassification
     form_class = ImageUploadForm
     template_name = 'blog/classifier.html'
-    success_url = reverse_lazy('blog-classifier')  # evită eroarea de redirect
+    success_url = reverse_lazy('blog-classifier')
+    context_object_name = 'classifier'
 
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        self.object = form.instance
+        return response
     
-def classifier_view(request):
-    label = None
-    if request.method == "POST":
-        # salvezi imaginea aici, sau doar dummy logic
-        form = 'Ceva'
-        label = "Cat"  # Dummy label, ulterior înlocuiești cu outputul real
-    return render(request, 'blog/classifier.html', {'form': form, 'label': label})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        latest = ImageClassification.objects.filter(user=self.request.user).last()
+        context['classifier'] = latest
+        return context
+
+# def classifier_view(request):
+#     label = None
+#     if request.method == "POST":
+#         # salvezi imaginea aici, sau doar dummy logic
+#         form = 'Ceva'
+#         label = "Cat"  # Dummy label, ulterior înlocuiești cu outputul real
+#     return render(request, 'blog/classifier.html', {'form': form, 'label': label})
 
     
 class PostListView(ListView):
