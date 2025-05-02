@@ -9,7 +9,7 @@ from django.views.generic import (ListView,
                                   CreateView,
                                   UpdateView,
                                   DeleteView)
-
+from .keras_utils import classify_image
 
 
 def home(request):
@@ -29,7 +29,13 @@ class ClassifierView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         response = super().form_valid(form)
-        self.object = form.instance
+
+        img_path = self.object.image.path
+        label, confidence = classify_image(img_path)
+        self.object.predicted_label = label
+        self.object.confidence = confidence
+        self.object.save()
+
         return response
     
     def get_context_data(self, **kwargs):

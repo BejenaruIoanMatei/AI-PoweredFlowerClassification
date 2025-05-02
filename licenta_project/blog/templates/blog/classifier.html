@@ -17,6 +17,17 @@
     </div>
   {% endif %}
 
+  {% if classifier.predicted_label %}
+  <div class="mt-3">
+    <h5>Classification Result:</h5>
+    <p>
+      ✅ <strong>{{ classifier.predicted_label }}</strong><br>
+      🔍 Confidence: <strong>{{ classifier.confidence|floatformat:2 }}</strong>
+    </p>
+  </div>
+  {% endif %}
+
+
   <button type="button" class="btn btn-success mt-4" data-toggle="modal" data-target="#verifyModal">
     Verify
   </button>
