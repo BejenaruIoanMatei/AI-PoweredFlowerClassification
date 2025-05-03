@@ -1,19 +1,18 @@
 {% extends "blog/base.html" %}
 {% load static %}
+<link rel="stylesheet" href="{% static 'virtual_garden/main.css' %}">
+
 
 {% block content %}
-<h2 class="text-center my-4">🌸 Grădina ta virtuală</h2>
+<h2 class="text-center my-4">🌸 Gradina ta virtuala</h2>
 
 <div class="garden-container" style="position: relative; height: 500px;">
-  {% for gf in flowers %}
-    <div class="flower" style="position: absolute; left: {{ gf.x_position }}px; top: {{ gf.y_position }}px;">
-      <img 
-        src="{{ MEDIA_URL }}{{ gf.flower.icon_path }}" 
-        class="{% if not gf.unlocked %}locked{% endif %}" 
-        width="64"
-        title="{{ gf.flower.name }}"
-      />
-    </div>
+  {% for gf in garden_flowers %}
+    <img src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+    style="{% if not gf.unlocked %}filter: grayscale(100%) opacity(0.6);{% endif %}"
+    class="flower"
+    width="256"
+    title="{{ gf.flower.name }}" />
   {% endfor %}
 </div>
 {% endblock %}
