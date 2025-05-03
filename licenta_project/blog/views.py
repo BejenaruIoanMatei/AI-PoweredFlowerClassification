@@ -38,12 +38,12 @@ class ClassifierView(LoginRequiredMixin, CreateView):
         self.object.confidence = confidence
         self.object.save()
 
-        # Unlock flower
-        flower = Flower.objects.get(name=label)
-        garden = VirtualGarden.objects.get(user=self.request.user)
-        gf, created = GardenFlower.objects.get_or_create(garden=garden, flower=flower)
-        gf.unlocked = True
-        gf.save()
+        # # Unlock flower
+        # flower = Flower.objects.get(name=label)
+        # garden = VirtualGarden.objects.get(user=self.request.user)
+        # gf, created = GardenFlower.objects.get_or_create(garden=garden, flower=flower)
+        # gf.unlocked = True
+        # gf.save()
     
         return response
     

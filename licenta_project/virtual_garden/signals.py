@@ -7,5 +7,16 @@ from .models import VirtualGarden, Flower, GardenFlower
 def create_virtual_garden(sender, instance, created, **kwargs):
     if created:
         garden = VirtualGarden.objects.create(user=instance)
-        for flower in Flower.objects.all():
-            GardenFlower.objects.create(garden=garden, flower=flower, unlocked=False)
+        
+        flowers = list(Flower.objects.all())
+        garden_flowers = []
+        
+        for flower in flowers:
+            garden_flowers.append(GardenFlower(
+                garden=garden,
+                flower=flower,
+                unlocked=False
+            ))
+        
+        if garden_flowers:
+            GardenFlower.objects.bulk_create(garden_flowers)
