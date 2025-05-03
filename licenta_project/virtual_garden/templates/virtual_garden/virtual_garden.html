@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block content %}
+<h2 class="text-center my-4">🌸 Grădina ta virtuală</h2>
+
+<div class="garden-container" style="position: relative; height: 500px;">
+  {% for gf in flowers %}
+    <div class="flower" style="position: absolute; left: {{ gf.x_position }}px; top: {{ gf.y_position }}px;">
+      <img 
+        src="{{ MEDIA_URL }}{{ gf.flower.icon_path }}" 
+        class="{% if not gf.unlocked %}locked{% endif %}" 
+        width="64"
+        title="{{ gf.flower.name }}"
+      />
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
