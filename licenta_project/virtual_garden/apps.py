@@ -6,4 +6,4 @@ class VirtualGardenConfig(AppConfig):
     name = 'virtual_garden'
 
     def ready(self):
-        import users.signals
+        import virtual_garden.signals
