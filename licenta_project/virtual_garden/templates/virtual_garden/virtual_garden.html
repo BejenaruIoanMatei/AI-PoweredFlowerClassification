@@ -171,12 +171,12 @@
                     </div>
                 {%endfor%}
             {%endif%}
-            <h2 class="text-center my-4">🌸 Gradina ta virtuală</h2>
+            <h2 class="text-center my-4">🌸 Your virtual garden</h2>
 
             <div class="row garden-container">
               <!-- LEFT SIDE - Unlocked Flowers -->
               <div class="col-md-6 garden-section unlocked-garden">
-                <h4 class="section-title">Flori Deblocate</h4>
+                <h4 class="section-title">Unlocked Flowers</h4>
                 {% for gf in garden_flowers %}
                   {% if gf.unlocked %}
                     <div class="flower-item text-center">
@@ -192,7 +192,7 @@
               
               <!-- RIGHT SIDE - Locked Flowers -->
               <div class="col-md-6 garden-section locked-garden">
-                <h4 class="section-title">Flori Blocate</h4>
+                <h4 class="section-title">To be unlocked</h4>
                 {% for gf in garden_flowers %}
                   {% if not gf.unlocked %}
                     <div class="flower-item text-center">

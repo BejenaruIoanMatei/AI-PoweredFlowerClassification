@@ -11,7 +11,7 @@ from django.views.generic import (ListView,
                                   DeleteView)
 from .keras_utils import classify_image
 from virtual_garden.models import GardenFlower, Flower, VirtualGarden
-
+from .utils import normalize_label
 
 def home(request):
     context = {
@@ -26,25 +26,33 @@ class ClassifierView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('blog-classifier')
     context_object_name = 'classifier'
 
-
-
     def form_valid(self, form):
         form.instance.user = self.request.user
         response = super().form_valid(form)
-    
+
         img_path = self.object.image.path
         label, confidence = classify_image(img_path)
-        self.object.predicted_label = label
+        
+        normalized = normalize_label(label)
+
+        # Salvează rezultatul clasificării
+        self.object.predicted_label = normalized
         self.object.confidence = confidence
         self.object.save()
 
-        # # Unlock flower
-        # flower = Flower.objects.get(name=label)
-        # garden = VirtualGarden.objects.get(user=self.request.user)
-        # gf, created = GardenFlower.objects.get_or_create(garden=garden, flower=flower)
-        # gf.unlocked = True
-        # gf.save()
-    
+        # =============================
+        # 🔓 Deblochează floarea
+        try:
+            flower = Flower.objects.get(name__iexact=normalized)
+            garden, _ = VirtualGarden.objects.get_or_create(user=self.request.user)
+            gf, created = GardenFlower.objects.get_or_create(garden=garden, flower=flower)
+            if not gf.unlocked:
+                gf.unlocked = True
+                gf.save()
+        except Flower.DoesNotExist:
+            print(f"Floarea cu numele '{normalized}' nu a fost găsită în baza de date.")
+        # =============================
+
         return response
     
     def get_context_data(self, **kwargs):
