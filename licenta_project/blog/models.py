@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 from PIL import Image, UnidentifiedImageError
+from virtual_garden.models import Flower
 
 
 class Post(models.Model):
@@ -59,3 +60,12 @@ class ImageClassification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.predicted_label or 'Unclassified'}"
+    
+class Activity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    flower = models.ForeignKey(Flower, on_delete=models.SET_NULL, null=True, blank=True)
+    timestamp = models.DateTimeField(default=timezone.now)
+    message = models.CharField(max_length=255, blank=True)
+    
+    def __str__(self):
+        return self.message or f"{self.user.username} did something idunno"

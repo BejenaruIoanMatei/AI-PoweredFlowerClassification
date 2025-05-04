@@ -1,0 +1,11 @@
+{% extends "blog/base.html" %}
+{% block content %}
+  <h2>Activity Feed</h2>
+  <ul>
+    {% for act in activities %}
+      <li>{{ act.timestamp|date:"SHORT_DATETIME_FORMAT" }} - {{ act.message }}</li>
+    {% empty %}
+      <li>No recent activity yet.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

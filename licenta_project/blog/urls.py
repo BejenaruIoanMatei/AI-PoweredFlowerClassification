@@ -5,12 +5,14 @@ from .views import (PostListView,
                     PostUpdateView,
                     PostDeleteView,
                     UserPostListView,
-                    ClassifierView)
+                    ClassifierView,
+                    ActivityFeedView)
 from . import views
 from virtual_garden.views import VirtualGardenView
 
 urlpatterns = [
     path('', ClassifierView.as_view(), name='blog-classifier'),
+    path('activity/', ActivityFeedView.as_view(), name='activity-feed'),
     path('garden/', VirtualGardenView.as_view(), name='virtual-garden'),
     path('blog/', PostListView.as_view(), name='blog-home'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),

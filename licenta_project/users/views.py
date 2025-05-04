@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from virtual_garden.models import VirtualGarden, GardenFlower
+from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404
 
 def register(request):
     if request.method == 'POST':
@@ -40,3 +44,19 @@ def profile(request):
         'p_form': p_form
     }    
     return render(request, 'users/profile.html', context)
+
+class UserProfileView(DetailView):
+    model = User
+    template_name = 'users/user_profile.html'
+    context_object_name = 'profile_user'
+    
+    def get_object(self):
+        return get_object_or_404(User, username=self.kwargs['username'])
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        garden = VirtualGarden.objects.filter(user=user).first()
+        context['garden_flowers'] = GardenFlower.objects.filter(garden=garden, unlocked=True) if garden else []
+        
+        return context

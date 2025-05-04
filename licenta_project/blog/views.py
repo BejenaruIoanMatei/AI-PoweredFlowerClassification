@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
-from .models import Post, ImageClassification
+from .models import Post, ImageClassification, Activity
 from .forms import ImageUploadForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (ListView, 
@@ -19,6 +19,14 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
+class ActivityFeedView(ListView):
+    model = Activity
+    template_name = 'blog/activity.html'
+    context_object_name = 'activities'
+    ordering = ['-timestamp']
+    paginate_by = 10
+    
+
 class ClassifierView(LoginRequiredMixin, CreateView):
     model = ImageClassification
     form_class = ImageUploadForm
@@ -35,13 +43,10 @@ class ClassifierView(LoginRequiredMixin, CreateView):
         
         normalized = normalize_label(label)
 
-        # Salvează rezultatul clasificării
         self.object.predicted_label = normalized
         self.object.confidence = confidence
         self.object.save()
 
-        # =============================
-        # 🔓 Deblochează floarea
         try:
             flower = Flower.objects.get(name__iexact=normalized)
             garden, _ = VirtualGarden.objects.get_or_create(user=self.request.user)
@@ -49,8 +54,14 @@ class ClassifierView(LoginRequiredMixin, CreateView):
             if not gf.unlocked:
                 gf.unlocked = True
                 gf.save()
+                
+                Activity.objects.create(
+                    user=self.request.user,
+                    flower=flower,
+                    message=f'{self.request.user.username} discovered {flower.name}'
+                )
         except Flower.DoesNotExist:
-            print(f"Floarea cu numele '{normalized}' nu a fost găsită în baza de date.")
+            print(f"Floarea cu numele '{normalized}' nu a fost gasita in db.")
         # =============================
 
         return response
