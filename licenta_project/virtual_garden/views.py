@@ -32,7 +32,6 @@ def user_garden_view(request, username):
 
     garden_flowers_qs = GardenFlower.objects.filter(garden=garden).select_related('flower')
     
-    # Folosim această listă pentru template: fiecare element conține floarea și dacă este deblocată
     garden_flowers = [
         {
             'flower': gf.flower,

@@ -5,7 +5,7 @@
     {% for act in activities %}
     <li>
         {{ act.timestamp|date:"SHORT_DATETIME_FORMAT" }} - 
-        <a href="{% url 'user-profile' act.user.username %}">{{ act.user.username }}</a>
+        <a href="{% url 'user-garden' act.user.username %}">{{ act.user.username }}</a>
         {{ act.message }}
       </li>
     {% endfor %}

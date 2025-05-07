@@ -45,18 +45,18 @@ def profile(request):
     }    
     return render(request, 'users/profile.html', context)
 
-class UserProfileView(DetailView):
-    model = User
-    template_name = 'users/user_profile.html'
-    context_object_name = 'profile_user'
+# class UserProfileView(DetailView):
+#     model = User
+#     template_name = 'users/user_profile.html'
+#     context_object_name = 'profile_user'
     
-    def get_object(self):
-        return get_object_or_404(User, username=self.kwargs['username'])
+#     def get_object(self):
+#         return get_object_or_404(User, username=self.kwargs['username'])
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.get_object()
-        garden = VirtualGarden.objects.filter(user=user).first()
-        context['garden_flowers'] = GardenFlower.objects.filter(garden=garden, unlocked=True) if garden else []
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         user = self.get_object()
+#         garden = VirtualGarden.objects.filter(user=user).first()
+#         context['garden_flowers'] = GardenFlower.objects.filter(garden=garden, unlocked=True) if garden else []
         
-        return context
+#         return context
