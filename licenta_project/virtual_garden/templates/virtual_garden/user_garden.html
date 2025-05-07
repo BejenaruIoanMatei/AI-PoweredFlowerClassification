@@ -168,27 +168,29 @@
       </div>
 
       <div class="row w-100">
-        <!-- Stânga: Flori deblocate -->
+       <!-- Stânga: Flori deblocate -->
         <div class="col-md-3">
-          <h4 class="section-title">✅ Flori deblocate</h4>
-          <div id="unlocked-flowers" class="d-flex flex-column align-items-center">
+            <h4 class="section-title">✅ Flori deblocate</h4>
+            <div id="unlocked-flowers" class="d-flex flex-column align-items-center">
             {% for gf in garden_flowers %}
-              {% if gf.unlocked %}
-                <div class="flower-item">
-                  <img 
-                    src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
-                    class="flower-selectable" 
-                    data-flower-id="{{ gf.flower.id }}" 
-                    data-icon-path="{% get_media_prefix %}{{ gf.flower.icon_path }}"
-                    title="{{ gf.flower.name }}"
-                    width="80"
-                  />
-                  <div class="flower-info">{{ gf.flower.name }}</div>
-                </div>
-              {% endif %}
+                {% if gf.unlocked %}
+                  <div class="flower-item">
+                    <img 
+                      src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
+                      class="flower-selectable" 
+                      data-flower-id="{{ gf.flower.id }}" 
+                      data-icon-path="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                      title="{{ gf.flower.name }}"
+                      width="80"
+                    />
+                    <div class="flower-info">{{ gf.flower.name }}</div>
+                  </div>
+                {% endif %}
             {% endfor %}
-          </div>
+              
+            </div>
         </div>
+  
       
         <!-- Mijloc: Ghivece -->
         <div class="col-md-6">
@@ -196,8 +198,11 @@
           <form method="POST" id="garden-form">
             {% csrf_token %}
             <div class="slot-grid">
-              {% for slot in slots %}
-                <div class="pot-container" data-slot-index="{{ slot.slot_index }}">
+                {% for slot in slots %}
+                <div 
+                  class="pot-container {% if slot.flower %}occupied{% endif %}" 
+                  data-slot-index="{{ slot.slot_index }}"
+                >
                   {% if slot.flower %}
                     <img src="{% get_media_prefix %}{{ slot.flower.icon_path }}" class="flower" alt="{{ slot.flower.name }}">
                   {% endif %}
@@ -206,6 +211,7 @@
                   <input type="hidden" name="flower_{{ slot.slot_index }}" id="slot-{{ slot.slot_index }}" value="{% if slot.flower %}{{ slot.flower.id }}{% endif %}">
                 </div>
               {% endfor %}
+              
             </div>
             {% if user == garden_owner %}
               <button type="submit" class="btn btn-success mt-4">💾 Salvează grădina</button>
@@ -296,7 +302,7 @@
   
             input.value = selectedFlowerId;
   
-            selectedFlowerElement.closest('.flower-item').remove();
+            selectedFlowerElement.closest('.flower-item').style.display = 'none';
   
             selectedFlowerId = null;
             selectedFlowerIcon = null;
@@ -341,6 +347,7 @@
   
               wrapper.appendChild(newFlower);
               wrapper.appendChild(info);
+              wrapper.style.display = 'block';
               container.appendChild(wrapper);
   
               bindFlowerClick(newFlower);

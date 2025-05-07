@@ -28,11 +28,18 @@ def user_garden_view(request, username):
         slots.append(slot)
         
     flowers = Flower.objects.all()
-    unlocked_flower_ids = GardenFlower.objects.filter(garden=garden, unlocked=True).values_list('flower_id', flat=True)
-    unlocked_flowers = Flower.objects.filter(id__in=unlocked_flower_ids)
-    garden_flowers = GardenFlower.objects.filter(garden=garden).select_related('flower')
+    planted_flower_ids = [slot.flower.id for slot in slots if slot.flower]
 
-
+    garden_flowers_qs = GardenFlower.objects.filter(garden=garden).select_related('flower')
+    
+    # Folosim această listă pentru template: fiecare element conține floarea și dacă este deblocată
+    garden_flowers = [
+        {
+            'flower': gf.flower,
+            'unlocked': gf.unlocked and gf.flower.id not in planted_flower_ids
+        }
+        for gf in garden_flowers_qs
+    ]
 
     if request.method == 'POST' and request.user == user:
         for slot in slots:
@@ -49,6 +56,5 @@ def user_garden_view(request, username):
         'slots': slots,
         'flowers': flowers,
         'garden_owner': user,
-        'unlocked_flowers': unlocked_flowers,
         'garden_flowers': garden_flowers,
     })
