@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import VirtualGarden, Flower, GardenFlower
+from .models import VirtualGarden, Flower, GardenFlower, GardenSlot
 
 @receiver(post_save, sender=User)
 def create_virtual_garden(sender, instance, created, **kwargs):
@@ -20,3 +20,9 @@ def create_virtual_garden(sender, instance, created, **kwargs):
         
         if garden_flowers:
             GardenFlower.objects.bulk_create(garden_flowers)
+
+@receiver(post_save, sender=VirtualGarden)
+def create_garden_slots(sender, instance, created, **kwargs):
+    if created:
+        for i in range(18):
+            GardenSlot.objects.create(garden=instance, slot_index=i)

@@ -13,7 +13,7 @@ from virtual_garden.views import VirtualGardenView
 urlpatterns = [
     path('', ClassifierView.as_view(), name='blog-classifier'),
     path('activity/', ActivityFeedView.as_view(), name='activity-feed'),
-    path('garden/', VirtualGardenView.as_view(), name='virtual-garden'),
+    path('flowers/', VirtualGardenView.as_view(), name='virtual-garden'),
     path('blog/', PostListView.as_view(), name='blog-home'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
     path('post/new/', PostCreateView.as_view(), name='post-create'),

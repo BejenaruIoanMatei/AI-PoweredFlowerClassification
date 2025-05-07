@@ -1,6 +1,10 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import VirtualGarden, GardenFlower
+
+from .models import VirtualGarden, GardenFlower, Flower, GardenSlot
+from django.contrib.auth.models import User
 
 class VirtualGardenView(LoginRequiredMixin, TemplateView):
     template_name = 'virtual_garden/virtual_garden.html'
@@ -12,3 +16,39 @@ class VirtualGardenView(LoginRequiredMixin, TemplateView):
         context['garden'] = garden
         context['garden_flowers'] = GardenFlower.objects.filter(garden=garden).select_related('flower')
         return context
+
+@login_required
+def user_garden_view(request, username):
+    user = get_object_or_404(User, username=username)
+    garden, _ = VirtualGarden.objects.get_or_create(user=user)
+
+    slots = []
+    for i in range(18):
+        slot, _ = GardenSlot.objects.get_or_create(garden=garden, slot_index=i)
+        slots.append(slot)
+        
+    flowers = Flower.objects.all()
+    unlocked_flower_ids = GardenFlower.objects.filter(garden=garden, unlocked=True).values_list('flower_id', flat=True)
+    unlocked_flowers = Flower.objects.filter(id__in=unlocked_flower_ids)
+    garden_flowers = GardenFlower.objects.filter(garden=garden).select_related('flower')
+
+
+
+    if request.method == 'POST' and request.user == user:
+        for slot in slots:
+            flower_id = request.POST.get(f'flower_{slot.slot_index}')
+            if flower_id:
+                flower = Flower.objects.get(id=flower_id)
+                slot.flower = flower
+            else:
+                slot.flower = None
+            slot.save()
+        return redirect('user-profile', username=username)
+
+    return render(request, 'virtual_garden/user_garden.html', {
+        'slots': slots,
+        'flowers': flowers,
+        'garden_owner': user,
+        'unlocked_flowers': unlocked_flowers,
+        'garden_flowers': garden_flowers,
+    })

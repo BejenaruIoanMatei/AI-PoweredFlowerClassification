@@ -1,0 +1,375 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+
+  <style>
+    .garden-container {
+      margin-top: 30px;
+    }
+    .section-title {
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .flower-item {
+      margin: 15px;
+      text-align: center;
+    }
+    .flower {
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s;
+    }
+    .flower:hover {
+      transform: scale(1.05);
+    }
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 100px);
+      grid-gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .pot-container {
+      position: relative;
+      width: 100px;
+      height: 120px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .pot-container.occupied {
+        cursor: not-allowed;
+      }
+
+    .pot-container.occupied::after {
+        content: "🛑";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 20px;
+        opacity: 0.7;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+    .pot-container:hover {
+      transform: scale(1.05);
+    }
+    .pot-container img.flower {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      width: 80px;
+      height: 80px;
+      z-index: 1;
+    }
+    .pot-container img.pot {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: 100px;
+      height: 80px;
+      z-index: 2;
+    }
+    .flower-selectable {
+      border: 3px solid transparent;
+      border-radius: 10px;
+      padding: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .flower-selectable:hover {
+      background-color: rgba(0, 128, 0, 0.1);
+    }
+    .flower-selectable.selected {
+      border-color: #28a745;
+      background-color: rgba(40, 167, 69, 0.2);
+    }
+    .flower-info {
+      font-size: 12px;
+      margin-top: 5px;
+      text-align: center;
+    }
+    .instructions {
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+    }
+    .pot-highlight {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 10px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .pot-highlight.can-plant {
+      background-color: rgba(40, 167, 69, 0.2);
+      border: 2px dashed #28a745;
+    }
+  </style>
+
+  <title>Grădina Virtuală</title>
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <div class="container">
+        <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">Django Blog</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" href="{% url 'blog-classifier' %}">Home</a>
+            <a class="nav-item nav-link" href="{% url 'blog-home' %}">Blog</a>
+            <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
+          </div>
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="{% url 'virtual-garden' %}">Garden</a>
+            {% if user.is_authenticated %}
+              <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
+              <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+              <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+              <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+              <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main role="main" class="container">
+    <div class="row garden-container">
+      <div class="col-md-12 text-center">
+        <h2 class="my-4">🌸 Grădina virtuală a lui {{ garden_owner.username }}</h2>
+        
+        <div class="instructions">
+          <p>
+            <i class="fas fa-info-circle"></i> 
+            Selectează o floare din partea stângă și apoi un ghiveci în care să o plantezi. 
+            Apasă pe butonul de salvare pentru a-ți păstra aranjamentul.
+          </p>
+        </div>
+      </div>
+
+      <div class="row w-100">
+        <!-- Stânga: Flori deblocate -->
+        <div class="col-md-3">
+          <h4 class="section-title">✅ Flori deblocate</h4>
+          <div id="unlocked-flowers" class="d-flex flex-column align-items-center">
+            {% for gf in garden_flowers %}
+              {% if gf.unlocked %}
+                <div class="flower-item">
+                  <img 
+                    src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
+                    class="flower-selectable" 
+                    data-flower-id="{{ gf.flower.id }}" 
+                    data-icon-path="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                    title="{{ gf.flower.name }}"
+                    width="80"
+                  />
+                  <div class="flower-info">{{ gf.flower.name }}</div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      
+        <!-- Mijloc: Ghivece -->
+        <div class="col-md-6">
+          <h4 class="section-title">🪴 Ghivece</h4>
+          <form method="POST" id="garden-form">
+            {% csrf_token %}
+            <div class="slot-grid">
+              {% for slot in slots %}
+                <div class="pot-container" data-slot-index="{{ slot.slot_index }}">
+                  {% if slot.flower %}
+                    <img src="{% get_media_prefix %}{{ slot.flower.icon_path }}" class="flower" alt="{{ slot.flower.name }}">
+                  {% endif %}
+                  <img src="{% get_media_prefix %}garden/pot.png" class="pot" alt="pot">
+                  <div class="pot-highlight"></div>
+                  <input type="hidden" name="flower_{{ slot.slot_index }}" id="slot-{{ slot.slot_index }}" value="{% if slot.flower %}{{ slot.flower.id }}{% endif %}">
+                </div>
+              {% endfor %}
+            </div>
+            {% if user == garden_owner %}
+              <button type="submit" class="btn btn-success mt-4">💾 Salvează grădina</button>
+            {% endif %}
+          </form>
+        </div>
+      
+        <!-- Dreapta: Flori blocate -->
+        <div class="col-md-3">
+          <h4 class="section-title">🔒 Flori blocate</h4>
+          <div class="d-flex flex-column align-items-center">
+            {% for gf in garden_flowers %}
+              {% if not gf.unlocked %}
+                <div class="flower-item">
+                  <img 
+                    src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
+                    class="flower" 
+                    title="{{ gf.flower.name }}" 
+                    style="filter: grayscale(100%) opacity(0.5);"
+                    width="80"
+                  />
+                  <div class="flower-info">{{ gf.flower.name }}</div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let selectedFlowerId = null;
+      let selectedFlowerIcon = null;
+      let selectedFlowerElement = null;
+  
+      // Selectare floare
+      function bindFlowerClick(flower) {
+        flower.addEventListener('click', () => {
+          document.querySelectorAll('.flower-selectable').forEach(f => f.classList.remove('selected'));
+          flower.classList.add('selected');
+          selectedFlowerId = flower.dataset.flowerId;
+          selectedFlowerIcon = flower.dataset.iconPath;
+          selectedFlowerElement = flower;
+  
+          document.querySelectorAll('.pot-container .pot-highlight').forEach(h => h.classList.add('can-plant'));
+        });
+      }
+  
+      document.querySelectorAll('.flower-selectable').forEach(bindFlowerClick);
+  
+      // Plantare floare
+      document.querySelectorAll('.pot-container').forEach(pot => {
+        let clickTimer = null;
+  
+        pot.addEventListener('click', (e) => {
+          if (clickTimer) return;
+          clickTimer = setTimeout(() => {
+            clickTimer = null;
+  
+            if (!selectedFlowerId) {
+              alert("Selectează mai întâi o floare!");
+              return;
+            }
+  
+            // Blochează plantarea dacă e deja ocupat
+            if (pot.classList.contains('occupied')) {
+              alert("Ghiveciul este deja ocupat! Dă dublu click pentru a scoate floarea.");
+              return;
+            }
+  
+            const slotIndex = pot.dataset.slotIndex;
+            const input = document.getElementById('slot-' + slotIndex);
+  
+            const existingFlower = pot.querySelector('img.flower');
+            if (existingFlower) existingFlower.remove();
+  
+            const img = document.createElement('img');
+            img.src = selectedFlowerIcon;
+            img.className = 'flower';
+            img.alt = selectedFlowerElement.title;
+            pot.insertBefore(img, pot.querySelector('.pot'));
+  
+            input.value = selectedFlowerId;
+  
+            selectedFlowerElement.closest('.flower-item').remove();
+  
+            selectedFlowerId = null;
+            selectedFlowerIcon = null;
+            selectedFlowerElement = null;
+  
+            document.querySelectorAll('.pot-container .pot-highlight').forEach(h => h.classList.remove('can-plant'));
+  
+            // Marchează ca ocupat
+            pot.classList.add('occupied');
+          }, 200);
+        });
+  
+        // Dublu click pentru a elibera ghiveciul
+        pot.addEventListener('dblclick', () => {
+          if (clickTimer) {
+            clearTimeout(clickTimer);
+            clickTimer = null;
+          }
+  
+          const flowerImg = pot.querySelector('img.flower');
+          if (flowerImg) {
+            const slotIndex = pot.dataset.slotIndex;
+            const input = document.getElementById('slot-' + slotIndex);
+            const flowerId = input.value;
+  
+            if (flowerId) {
+              const container = document.getElementById('unlocked-flowers');
+              const wrapper = document.createElement('div');
+              wrapper.className = 'flower-item';
+  
+              const newFlower = document.createElement('img');
+              newFlower.src = flowerImg.src;
+              newFlower.className = 'flower-selectable';
+              newFlower.dataset.flowerId = flowerId;
+              newFlower.dataset.iconPath = flowerImg.src;
+              newFlower.title = flowerImg.alt;
+              newFlower.width = 80;
+  
+              const info = document.createElement('div');
+              info.className = 'flower-info';
+              info.textContent = flowerImg.alt;
+  
+              wrapper.appendChild(newFlower);
+              wrapper.appendChild(info);
+              container.appendChild(wrapper);
+  
+              bindFlowerClick(newFlower);
+            }
+  
+            flowerImg.remove();
+            input.value = '';
+  
+            // Marchează ca neocupat
+            pot.classList.remove('occupied');
+          }
+        });
+      });
+  
+      // Deselectare floare cu Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (selectedFlowerElement) {
+            selectedFlowerElement.classList.remove('selected');
+            selectedFlowerId = null;
+            selectedFlowerIcon = null;
+            selectedFlowerElement = null;
+            document.querySelectorAll('.pot-container .pot-highlight').forEach(h => h.classList.remove('can-plant'));
+          }
+        }
+      });
+    });
+  </script>
+  
+  
+</body>
+</html>

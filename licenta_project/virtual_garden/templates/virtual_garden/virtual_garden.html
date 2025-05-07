@@ -147,7 +147,6 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-                <a class="nav-item nav-link" href="{%url 'virtual-garden'%}">Garden</a>
                 {%if user.is_authenticated%}
                     <a class="nav-item nav-link" href="{%url 'post-create'%}">New Post</a>
                     <a class="nav-item nav-link" href="{%url 'profile'%}">Profile</a>
@@ -171,7 +170,7 @@
                     </div>
                 {%endfor%}
             {%endif%}
-            <h2 class="text-center my-4">🌸 Your virtual garden</h2>
+            <h2 class="text-center my-4">Learn more about the flowers</h2>
 
             <div class="row garden-container">
               <!-- LEFT SIDE - Unlocked Flowers -->
