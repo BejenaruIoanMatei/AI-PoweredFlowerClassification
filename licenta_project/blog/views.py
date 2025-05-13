@@ -24,7 +24,7 @@ class ActivityFeedView(ListView):
     template_name = 'blog/activity.html'
     context_object_name = 'activities'
     ordering = ['-timestamp']
-    paginate_by = 10
+    paginate_by = 5
     
 
 class ClassifierView(LoginRequiredMixin, CreateView):
