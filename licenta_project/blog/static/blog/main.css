@@ -1,84 +1,140 @@
+/* main.css */
 body {
     background: #fafafa;
     color: #333333;
     margin-top: 5rem;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
+}
+ 
+h1, h2, h3, h4, h5, h6 {
     color: #444444;
-  }
-  
-  ul {
+}
+ 
+ul {
     margin: 0;
-  }
-  
-  .bg-steel {
+}
+ 
+.bg-steel {
     background-color: #5f788a;
-  }
-  
-  .site-header .navbar-nav .nav-link {
+}
+ 
+.site-header .navbar-nav .nav-link {
     color: #cbd5db;
-  }
-  
-  .site-header .navbar-nav .nav-link:hover {
+}
+ 
+.site-header .navbar-nav .nav-link:hover {
     color: #ffffff;
-  }
-  
-  .site-header .navbar-nav .nav-link.active {
+}
+ 
+.site-header .navbar-nav .nav-link.active {
     font-weight: 500;
-  }
-  
-  .content-section {
+}
+ 
+.content-section {
     background: #ffffff;
     padding: 10px 20px;
     border: 1px solid #dddddd;
     border-radius: 3px;
     margin-bottom: 20px;
-  }
-  
-  .article-title {
+}
+ 
+.article-title {
     color: #444444;
-  }
-  
-  a.article-title:hover {
+}
+ 
+a.article-title:hover {
     color: #428bca;
     text-decoration: none;
-  }
-  
-  .article-content {
+}
+ 
+.article-content {
     white-space: pre-line;
-  }
-  
-  .article-img {
+}
+ 
+.article-img {
     height: 65px;
     width: 65px;
     margin-right: 16px;
-  }
-  
-  .article-metadata {
+}
+ 
+.article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;
     border-bottom: 1px solid #e3e3e3
-  }
-  
-  .article-metadata a:hover {
+}
+ 
+.article-metadata a:hover {
     color: #333;
     text-decoration: none;
-  }
-  
-  .article-svg {
+}
+ 
+.article-svg {
     width: 25px;
     height: 25px;
     vertical-align: middle;
-  }
-  
-  .account-img {
+}
+ 
+.account-img {
     height: 125px;
     width: 125px;
     margin-right: 20px;
     margin-bottom: 16px;
-  }
-  
-  .account-heading {
+}
+ 
+.account-heading {
     font-size: 2.5rem;
-  }
+}
+
+/* Stilizare Activity Feed */
+.activity-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.activity-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.activity-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.activity-user {
+  font-weight: 600;
+  color: #4a6fa5;
+  text-decoration: none;
+}
+
+.activity-user:hover {
+  color: #3a5a8c;
+  text-decoration: underline;
+}
+
+.activity-body {
+  color: #333;
+  line-height: 1.5;
+  padding: 0.5rem 0;
+}

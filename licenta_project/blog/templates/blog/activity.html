@@ -1,13 +1,17 @@
 {% extends "blog/base.html" %}
 {% block content %}
   <h2>Activity Feed</h2>
-  <ul>
+  <div class="activity-container">
     {% for act in activities %}
-    <li>
-        {{ act.timestamp|date:"SHORT_DATETIME_FORMAT" }} - 
-        <a href="{% url 'user-garden' act.user.username %}">{{ act.user.username }}</a>
+    <div class="activity-card">
+      <div class="activity-header">
+        <span class="activity-time">{{ act.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
+        <a href="{% url 'user-garden' act.user.username %}" class="activity-user">@{{ act.user.username }}</a>
+      </div>
+      <div class="activity-body">
         {{ act.message }}
-      </li>
+      </div>
+    </div>
     {% endfor %}
-  </ul>
+  </div>
 {% endblock %}
