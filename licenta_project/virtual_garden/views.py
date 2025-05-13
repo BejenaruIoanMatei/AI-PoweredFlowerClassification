@@ -49,7 +49,7 @@ def user_garden_view(request, username):
             else:
                 slot.flower = None
             slot.save()
-        return redirect('user-profile', username=username)
+        return redirect('user-garden', username=username)
 
     return render(request, 'virtual_garden/user_garden.html', {
         'slots': slots,

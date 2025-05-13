@@ -21,7 +21,7 @@ def classify_image(img_path):
         predicted_index = np.argmax(preds)
         label = class_labels[predicted_index]
         confidence = float(preds[predicted_index])
-        print(f"✅ Predicted: {label} with confidence {confidence:.2f}")  # DEBUG
+        print(f"✅ Predicted: {label} with confidence {confidence:.2f}")
         return label, confidence
 
     except Exception as e:
