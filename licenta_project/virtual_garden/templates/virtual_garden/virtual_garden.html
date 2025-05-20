@@ -222,7 +222,7 @@
                       width="128"
                       title="{{ gf.flower.name }}"
                       data-name="{{ gf.flower.name }}"
-                      data-description="{{ gf.flower.description }}"
+                      data-description="{{gf.flower.description|escape}}"
                       data-image="{% get_media_prefix %}{{ gf.flower.icon_path }}"
                       onclick="showFlowerModal(this)"
                       aria-label="Click to learn more about {{ gf.flower.name }}"
@@ -264,7 +264,10 @@
             <img id="modalFlowerImage" src="" alt="" class="modal-flower-image">
             <div class="modal-flower-description">
               <h3 id="modalFlowerName"></h3>
-              <p id="modalFlowerDescription"></p>
+              <div class="modal-flower-description">
+                <h3 id="modalFlowerName"></h3>
+                <div id="modalFlowerDescription"></div>
+              </div>              
             </div>
           </div>
         </div>
@@ -292,20 +295,27 @@
     
     <!-- Modal Control Script -->
     <script>
+
+      {% comment %} function decodeHTML(html) {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+      }
+       {% endcomment %}
+
       function showFlowerModal(element) {
-        // Extrage datele din atributul "data-*"
         var name = element.getAttribute('data-name');
         var description = element.getAttribute('data-description');
         var image = element.getAttribute('data-image');
-    
-        // Populează modalul cu datele extrase
+      
         document.getElementById('modalFlowerName').innerText = name;
-        document.getElementById('modalFlowerDescription').innerText = description;
         document.getElementById('modalFlowerImage').src = image;
-    
-        // Afișează modalul
+      
+        document.getElementById('modalFlowerDescription').innerHTML = description;
+      
         document.getElementById('flowerModal').style.display = "block";
       }
+      
     
       function closeFlowerModal() {
         // Închide modalul

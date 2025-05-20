@@ -4,7 +4,7 @@ from keras.models import load_model
 import os
 import json
 
-model_path = '/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/2-Mai/Modul-2-Mai.keras'
+model_path = '/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/13-Mai/Modul-13-Mai.keras'
 model = load_model(model_path)
 
 with open('/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/2-Mai/class_labels.json') as f:

@@ -33,6 +33,7 @@ urlpatterns = [
             http_method_names=['get', 'post']
     ), name='logout'), 
     path('profile/<str:username>/garden/', virtual_garden_views.user_garden_view, name='user-garden'),
+    path('summernote/', include('django_summernote.urls')),
 ]
 
 if settings.DEBUG:
