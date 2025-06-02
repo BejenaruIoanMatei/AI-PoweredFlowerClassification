@@ -29,3 +29,6 @@ research
 
 # Settings.py
 licenta_project/licenta_project/settings.py
+
+# System Files
+.DS_Store
