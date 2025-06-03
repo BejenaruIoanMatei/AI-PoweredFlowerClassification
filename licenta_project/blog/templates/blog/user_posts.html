@@ -1,74 +1,76 @@
-{% extends "blog/base.html" %} {% block content %}
-<h1 class="mb-3">
-  Posts by {{ view.kwargs.username }} ({{page_obj.paginator.count}})
-  <br>
-  <a href="{%url 'user-garden' view.kwargs.username%}">See {{view.kwargs.username}}'s Garden</a>
-</h1>
-{% for post in posts %}
-<article class="media content-section">
-  <img
-    class="rounded-circle article-img"
-    src="{{ post.author.profile.image.url }}"
-  />
-  <div class="media-body">
-    <div class="article-metadata">
-      <a class="mr-2" href="{%url 'user-posts' post.author.username %}"
-        >{{ post.author }}</a
-      >
-      <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-    </div>
-    <h2>
-      <a class="article-title" href="{% url 'post-detail' post.id %}">
-        {{ post.title }}
-      </a>
-    </h2>
-    <p class="article-content">{{ post.content }}</p>
+{% extends "blog/base.html" %}
+{% block content %}
+  <h1 class="mb-4">
+    Posts by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})<br>
+    <a href="{% url 'user-garden' view.kwargs.username %}">See {{ view.kwargs.username }}'s Garden</a>
+  </h1>
+
+  <div class="post-list">
+    {% for post in posts %}
+      <article class="card mb-4 shadow-sm">
+        <div class="row no-gutters">
+          <!-- Imagine postare dacă există -->
+          {% if post.image_post %}
+            <div class="col-md-4">
+              <img src="{{ post.image_post.url }}" class="img-fluid rounded-left h-100 w-100 object-fit-cover" alt="Post image" />
+            </div>
+          {% endif %}
+
+          <div class="col">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <img
+                  src="{{ post.author.profile.image.url }}"
+                  alt="Profile"
+                  class="rounded-circle mr-2"
+                  style="width: 40px; height: 40px; object-fit: cover;"
+                />
+                <div class="article-metadata">
+                  <a class="mr-2 font-weight-bold" href="{% url 'user-posts' post.author.username %}">
+                    {{ post.author }}
+                  </a>
+                  <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+                </div>
+              </div>
+
+              <h5 class="card-title">
+                <a class="mr-1 font-weight-bold" href="{% url 'post-detail' post.id %}" class="text-dark">
+                  {{post.title}}
+                </a>
+              </h5>
+              <p class="card-text">{{ post.content }}</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
   </div>
-  {% if post.image_post %}
-  <div style="margin-left: 20px;">
-    <img class="img-thumbnail" src="{{ post.image_post.url }}" style="max-width: 300px;" />
-  </div>
+
+  {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Back</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">First</span></li>
+          <li class="page-item disabled"><span class="page-link">Back</span></li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">
+            Page {{ page_obj.number }} from {{ page_obj.paginator.num_pages }}
+          </span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Forward</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Forward</span></li>
+          <li class="page-item disabled"><span class="page-link">Last</span></li>
+        {% endif %}
+      </ul>
+    </nav>
   {% endif %}
-
-</article>
-{% endfor %} {% if is_paginated %}
-<nav aria-label="Page navigation">
-  <ul class="pagination justify-content-center">
-    {% if page_obj.has_previous %}
-    <li class="page-item">
-      <a class="page-link" href="?page=1">First</a>
-    </li>
-    <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
-        >Back</a
-      >
-    </li>
-    {% else %}
-    <li class="page-item disabled"><span class="page-link">First</span></li>
-    <li class="page-item disabled"><span class="page-link">Back</span></li>
-    {% endif %}
-
-    <li class="page-item active">
-      <span class="page-link">
-        Page {{ page_obj.number }} from {{ page_obj.paginator.num_pages }}
-      </span>
-    </li>
-
-    {% if page_obj.has_next %}
-    <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}"
-        >Forward</a
-      >
-    </li>
-    <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"
-        >Last</a
-      >
-    </li>
-    {% else %}
-    <li class="page-item disabled"><span class="page-link">Back</span></li>
-    <li class="page-item disabled"><span class="page-link">Last</span></li>
-    {% endif %}
-  </ul>
-</nav>
-{% endif %} {% endblock content %}
+{% endblock content %}

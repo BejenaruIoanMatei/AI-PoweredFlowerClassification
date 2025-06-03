@@ -1,38 +1,41 @@
-{%extends "blog/base.html"%} {%block content%}
-<article class="media content-section">
-  <img
-    class="rounded-circle article-img"
-    src="{{object.author.profile.image.url}}"
-  />
-  <div class="media-body">
-    <div class="article-metadata">
-      <a class="mr-2" href="{%url 'user-posts' post.author.username %}"
-        >{{ object.author }}</a
-      >
-      <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
-      {%if object.author == user%}
-      <div>
-        <a
-          class="btn btn-secondary btn-sm mt-1 mb-1"
-          href="{%url 'post-update' object.id%}"
-          >Update</a
-        >
-        <a
-          class="btn btn-danger btn-sm mt-1 mb-1"
-          href="{%url 'post-delete' object.id%}"
-          >Delete</a
-        >
-      </div>
+{% extends "blog/base.html" %}
+{% block content %}
+  <article class="card mb-4 shadow-sm">
+    <div class="row no-gutters">
+      {% if object.image_post %}
+        <div class="col-md-4">
+          <img src="{{ object.image_post.url }}" class="img-fluid rounded-left h-100 w-100 object-fit-cover" alt="Post image" />
+        </div>
+      {% endif %}
 
-      {%endif%}
+      <div class="col">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <img
+              src="{{ object.author.profile.image.url }}"
+              alt="Profile"
+              class="rounded-circle mr-2"
+              style="width: 40px; height: 40px; object-fit: cover;"
+            />
+            <div class="article-metadata">
+              <a class="mr-2 font-weight-bold" href="{% url 'user-posts' object.author.username %}">
+                {{ object.author }}
+              </a>
+              <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+            </div>
+          </div>
+
+          <h3 class="card-title">{{ object.title }}</h3>
+          <p class="card-text">{{ object.content }}</p>
+
+          {% if object.author == user %}
+            <div class="mt-3">
+              <a class="btn btn-sm btn-secondary" href="{% url 'post-update' object.id %}">Update</a>
+              <a class="btn btn-sm btn-danger" href="{% url 'post-delete' object.id %}">Delete</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    <h2 class="article-title">{{ object.title }}</h2>
-    <p class="article-content">{{ object.content }}</p>
-  </div>
-  {% if post.image_post %}
-  <div style="margin-left: 20px;">
-    <img class="img-thumbnail" src="{{ post.image_post.url }}" style="max-width: 300px;" />
-  </div>
-  {% endif %}
-</article>
-{%endblock content%}
+  </article>
+{% endblock content %}
