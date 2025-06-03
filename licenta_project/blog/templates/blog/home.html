@@ -1,40 +1,49 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-  {% for post in posts %}
-    <article class="media content-section align-items-start d-flex justify-content-between">
-      <!-- Stânga: profil + conținut -->
-      <div class="media-body" style="flex: 1;">
-        <div class="d-flex align-items-center mb-2">
-          <img class="rounded-circle article-img mr-2" src="{{ post.author.profile.image.url }}" />
-          <div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-posts' post.author.username %}">
-              {{ post.author }}
-            </a>
-            <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+  <div class="post-list">
+    {% for post in posts %}
+      <article class="card mb-4 shadow-sm">
+        <div class="row no-gutters">
+          <!-- Imagine postare dacă există -->
+          {% if post.image_post %}
+            <div class="col-md-4">
+              <img src="{{ post.image_post.url }}" class="img-fluid rounded-left h-100 w-100 object-fit-cover" alt="Post image" />
+            </div>
+          {% endif %}
+
+          <div class="col">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <img
+                  src="{{ post.author.profile.image.url }}"
+                  alt="Profile"
+                  class="rounded-circle mr-2"
+                  style="width: 40px; height: 40px; object-fit: cover;"
+                />
+                <div class="article-metadata">
+                  <a class="mr-2 font-weight-bold" href="{% url 'user-posts' post.author.username %}">
+                    {{ post.author }}
+                  </a>
+                  <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+                </div>
+              </div>
+
+              <h5 class="card-title">
+                <a href="{% url 'post-detail' post.id %}" class="text-dark">
+                  {{ post.title }}
+                </a>
+              </h5>
+              <p class="card-text">{{ post.content|truncatewords:40 }}</p>
+            </div>
           </div>
         </div>
-
-        <h2>
-          <a class="article-title" href="{% url 'post-detail' post.id %}">
-            {{ post.title }}
-          </a>
-        </h2>
-        <p class="article-content">{{ post.content }}</p>
-      </div>
-
-      <!-- Dreapta: imaginea postării -->
-      {% if post.image_post %}
-        <div style="margin-left: 20px;">
-          <img class="img-thumbnail" src="{{ post.image_post.url }}" style="max-width: 300px;" />
-        </div>
-      {% endif %}
-    </article>
-  {% endfor %}
+      </article>
+    {% endfor %}
+  </div>
 
   {% if is_paginated %}
-  <div style="margin-bottom: 3rem;">
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" class="mt-4">
       <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
           <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
@@ -43,13 +52,13 @@
           <li class="page-item disabled"><span class="page-link">First</span></li>
           <li class="page-item disabled"><span class="page-link">Back</span></li>
         {% endif %}
-        
+
         <li class="page-item active">
           <span class="page-link">
             Page {{ page_obj.number }} from {{ page_obj.paginator.num_pages }}
           </span>
         </li>
-        
+
         {% if page_obj.has_next %}
           <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Forward</a></li>
           <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
@@ -59,6 +68,5 @@
         {% endif %}
       </ul>
     </nav>
-  </div>
-{% endif %}
+  {% endif %}
 {% endblock content %}
