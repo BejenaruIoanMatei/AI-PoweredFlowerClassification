@@ -172,94 +172,79 @@ body.modal-open {
 </style>
 
 <div class="classifier-container">
-    <h1 class="classifier-title"> Plant Classifier </h1>
-    <p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
-    
-    <div class="upload-area text-center">
-        <span class="upload-icon"></span>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-plant mt-3">
-                <span class="plant-emoji"></span>Analyze Plant
-            </button>
-        </form>
-    </div>
+  <h1 class="classifier-title">Plant Classifier</h1>
+  <p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
+  
+  <div class="upload-area text-center">
+      <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="submit" class="btn btn-plant mt-3">
+              Analyze Plant
+          </button>
+      </form>
+  </div>
 </div>
 
 {% if classifier %}
 <div class="result-card fade-in">
-    <div class="text-center">
-        <h4 class="mb-4">
-            <span class="plant-emoji"></span>Your Beautiful Upload
-        </h4>
-        <img class="img-thumbnail result-image" src="{{ classifier.image.url }}" style="max-width: 350px;" />
-    </div>
+  <div class="text-center">
+      <h4 class="mb-4">Your Beautiful Upload</h4>
+      <img class="img-thumbnail result-image" src="{{ classifier.image.url }}" style="max-width: 350px;" />
+  </div>
 </div>
 {% endif %}
 
 {% if classifier.predicted_label %}
 <div class="result-card fade-in">
-    <div class="text-center">
-        <h4 class="mb-4">
-            <span class="plant-emoji">🌿</span>Classification Results
-        </h4>
-        
-        <div class="classification-badge">
-            <span class="plant-emoji">🌸</span>{{ classifier.predicted_label }}
-        </div>
-        
-        <div class="confidence-meter">
-            <h6><span class="plant-emoji">📊</span>Confidence Level</h6>
-            <div class="progress" style="height: 10px; border-radius: 5px;">
-                <div class="progress-bar bg-success" 
-                     style="width: {{ classifier.confidence|floatformat:0 }}%; border-radius: 5px;">
-                </div>
-            </div>
-            <small class="text-muted mt-2 d-block">{{ classifier.confidence|floatformat:2 }}% confident</small>
-        </div>
-        
-        <button type="button" class="btn btn-verify mt-4" data-toggle="modal" data-target="#verifyModal">
-            <span class="plant-emoji">🔍</span>Verify Results
-        </button>
-    </div>
-</div>
-
-<div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="verifyModalLabel">
-          <span class="plant-emoji"></span>Classification Verification
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+  <div class="text-center">
+      <h4 class="mb-4">Classification Results</h4>
+      
+      <div class="classification-badge">
+          {{ classifier.predicted_label }}
       </div>
-      <div class="modal-body text-center">
-        <div class="classification-badge" style="margin: 0;">
-          <span class="plant-emoji"></span>{{ classifier.predicted_label|default:"-" }}
-        </div>
-        <p class="mt-3 text-muted">
-          <span class="plant-emoji"></span>Does this classification look correct to you?
-        </p>
+      
+      <div class="confidence-meter">
+          <h6>Confidence Level</h6>
+          <div class="progress" style="height: 10px; border-radius: 5px;">
+              <div class="progress-bar bg-success" 
+                   style="width: {{ classifier.confidence|floatformat:0 }}%; border-radius: 5px;">
+              </div>
+          </div>
+          <small class="text-muted mt-2 d-block">{{ classifier.confidence|floatformat:2 }}% confident</small>
       </div>
-      <div class="modal-body text-center" style="padding-top: 0;">
-        <p class="mb-3">
-          <span class="plant-emoji"></span>Want to share this discovery on the blog?
-        </p>
-        <button type="button" class="btn btn-plant me-2">
-          <span class="plant-emoji"></span>Share on Blog
-        </button>
-      </div>
-      <div class="modal-footer justify-content-center" style="border: none; padding-top: 0;">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          <span class="plant-emoji"></span>Close
-        </button>
-      </div>
-    </div>
+      
+      <button type="button" class="btn btn-verify mt-4" data-toggle="modal" data-target="#verifyModal">
+          Verify Results
+      </button>
   </div>
 </div>
 
+<div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">  
+<div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="verifyModalLabel">Classification Verification</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-center">
+      <div class="classification-badge" style="margin: 0;">
+        {{ classifier.predicted_label|default:"-" }}
+      </div>
+      <p class="mt-3 text-muted">Does this classification look correct to you?</p>
+    </div>
+    <div class="modal-body text-center" style="padding-top: 0;">
+      <p class="mb-3">Want to share this discovery on the blog?</p>
+      <a href="{% url 'post-create' %}" class="btn btn-plant me-2">Share on Blog</a>
+    </div>
+    <div class="modal-footer justify-content-center" style="border: none; padding-top: 0;">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+</div>
 {% endif %}
 
 {% endblock %}
