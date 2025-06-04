@@ -5,243 +5,498 @@
 <style>
 /* Plant-themed classifier styles */
 .classifier-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    padding: 3rem 2rem;
-    margin: 2rem 0;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .classifier-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="flower-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23flower-pattern)"/></svg>');
-    animation: float 20s ease-in-out infinite;
-    pointer-events: none;
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="flower-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23flower-pattern)"/></svg>');
+  animation: float 20s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(180deg); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.btn-virtual-garden {
+  background: linear-gradient(135deg, #673AB7, #5E35B1);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(103, 58, 183, 0.3);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-virtual-garden:hover {
+  background: linear-gradient(135deg, #5E35B1, #512DA8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(103, 58, 183, 0.4);
+  color: white;
+  text-decoration: none;
 }
 
 .classifier-title {
-    color: white;
-    font-size: 2.5rem;
-    font-weight: 300;
-    margin-bottom: 0.5rem;
-    text-align: center;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .classifier-subtitle {
-    color: rgba(255,255,255,0.8);
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
+  color: rgba(255,255,255,0.8);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
 }
 
 .upload-area {
-    background: rgba(255,255,255,0.95);
-    border-radius: 15px;
-    padding: 2rem;
-    margin: 2rem 0;
-    backdrop-filter: blur(10px);
-    border: 2px dashed #4CAF50;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 1;
+  background: rgba(255,255,255,0.95);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 2rem 0;
+  backdrop-filter: blur(10px);
+  border: 2px dashed #4CAF50;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .upload-area:hover {
-    border-color: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(76, 175, 80, 0.2);
+  border-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(76, 175, 80, 0.2);
 }
 
 .upload-icon {
-    font-size: 3rem;
-    color: #4CAF50;
-    margin-bottom: 1rem;
-    display: block;
-    text-align: center;
+  font-size: 3rem;
+  color: #4CAF50;
+  margin-bottom: 1rem;
+  display: block;
+  text-align: center;
 }
 
 .btn-plant {
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    border: none;
-    border-radius: 25px;
-    padding: 12px 30px;
-    color: white;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-    position: relative;
-    z-index: 1;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .btn-plant:hover {
-    background: linear-gradient(135deg, #45a049, #3d8b40);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
-    color: white;
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+  color: white;
 }
 
 .result-card {
-    background: white;
-    border-radius: 20px;
-    padding: 2rem;
-    margin: 2rem 0;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    border: 1px solid #e8f5e8;
-    position: relative;
-    z-index: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  border: 1px solid #e8f5e8;
+  position: relative;
+  z-index: 1;
 }
 
 .result-image {
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease;
-    border: 3px solid #4CAF50;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+  border: 3px solid #4CAF50;
 }
 
 .result-image:hover {
-    transform: scale(1.02);
+  transform: scale(1.02);
 }
 
 .classification-badge {
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    color: white;
-    padding: 15px 25px;
-    border-radius: 50px;
-    display: inline-block;
-    margin: 1rem 0;
-    font-size: 1.2rem;
-    font-weight: 500;
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 50px;
+  display: inline-block;
+  margin: 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
 }
 
 .confidence-meter {
-    background: #f0f8f0;
-    border-radius: 10px;
-    padding: 1rem;
-    margin: 1rem 0;
-    border-left: 4px solid #4CAF50;
+  background: #f0f8f0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-left: 4px solid #4CAF50;
 }
 
 .btn-verify {
-    background: linear-gradient(135deg, #FF9800, #F57C00);
-    border: none;
-    border-radius: 25px;
-    padding: 12px 30px;
-    color: white;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
-    position: relative;
-    z-index: 1;
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .btn-verify:hover {
-    background: linear-gradient(135deg, #F57C00, #E65100);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
-    color: white;
+  background: linear-gradient(135deg, #F57C00, #E65100);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+  color: white;
 }
 
-/* Add this to your CSS */
-body.modal-open {
-    overflow: auto !important;
-    padding-right: 0 !important;
+/* MODERN MODAL STYLES */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
 }
 
-.modal-backdrop.fade.show {
-    display: none !important;
+.verification-modal .modal-dialog {
+  max-width: 450px;
+  margin: 5rem auto;
+}
+
+.verification-modal .modal-content {
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+  overflow: hidden;
+  animation: modalSlideIn 0.4s ease-out;
+  position: relative;
+}
+
+.verification-modal .modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
+}
+
+.verification-modal .modal-header {
+  background: linear-gradient(135deg, #f8fff8, #ffffff);
+  border: none;
+  padding: 2rem 2rem 0 2rem;
+  text-align: center;
+  position: relative;
+}
+
+
+
+.verification-modal .modal-title {
+  color: #2e7d32;
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+}
+
+.verification-modal .close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(76, 175, 80, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4CAF50;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.verification-modal .close:hover {
+  background: rgba(76, 175, 80, 0.2);
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+.verification-modal .modal-body {
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+.modal-classification-result {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.verification-question {
+  color: #555;
+  font-size: 1rem;
+  margin: 1.5rem 0;
+  line-height: 1.6;
+}
+
+.verification-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0 1rem 0;
+}
+
+.btn-share-blog {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-share-blog:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-share-blog::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+}
+
+.btn-modal-close {
+  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: #666;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.btn-modal-close:hover {
+  background: linear-gradient(135deg, #e8e8e8, #ddd);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  color: #555;
+}
+
+.verification-footer {
+  padding: 0 2rem 2rem 2rem;
+  border: none;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.accuracy-indicator {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.accuracy-text {
+  color: #2e7d32;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@keyframes modalSlideIn {
+  from {
+      opacity: 0;
+      transform: translateY(-50px) scale(0.9);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile responsiveness for modal */
+@media (max-width: 768px) {
+  .verification-modal .modal-dialog {
+      margin: 2rem 1rem;
+      max-width: none;
+  }
+  
+  .verification-modal .modal-header,
+  .verification-modal .modal-body,
+  .verification-footer {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+  }
+  
+  .verification-actions {
+      flex-direction: column;
+      align-items: center;
+  }
+  
+  .btn-share-blog,
+  .btn-modal-close {
+      width: 100%;
+      max-width: 200px;
+  }
 }
 </style>
 
 <div class="classifier-container">
-  <h1 class="classifier-title">Plant Classifier</h1>
-  <p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
-  
-  <div class="upload-area text-center">
-      <form method="POST" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form|crispy }}
-          <button type="submit" class="btn btn-plant mt-3">
-              Analyze Plant
-          </button>
-      </form>
-  </div>
+<h1 class="classifier-title">Plant Classifier</h1>
+<p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
+
+<div class="upload-area text-center">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-plant mt-3">
+            Analyze Plant
+        </button>
+    </form>
+</div>
 </div>
 
 {% if classifier %}
 <div class="result-card fade-in">
-  <div class="text-center">
-      <h4 class="mb-4">Your Beautiful Upload</h4>
-      <img class="img-thumbnail result-image" src="{{ classifier.image.url }}" style="max-width: 350px;" />
-  </div>
+<div class="text-center">
+    <h4 class="mb-4">Your Beautiful Upload</h4>
+    <img class="img-thumbnail result-image" src="{{ classifier.image.url }}" style="max-width: 350px;" />
+</div>
 </div>
 {% endif %}
 
 {% if classifier.predicted_label %}
 <div class="result-card fade-in">
-  <div class="text-center">
-      <h4 class="mb-4">Classification Results</h4>
-      
-      <div class="classification-badge">
-          {{ classifier.predicted_label }}
-      </div>
-      
-      <div class="confidence-meter">
-          <h6>Confidence Level</h6>
-          <div class="progress" style="height: 10px; border-radius: 5px;">
-              <div class="progress-bar bg-success" 
-                   style="width: {{ classifier.confidence|floatformat:0 }}%; border-radius: 5px;">
-              </div>
-          </div>
-          <small class="text-muted mt-2 d-block">{{ classifier.confidence|floatformat:2 }}% confident</small>
-      </div>
-      
-      <button type="button" class="btn btn-verify mt-4" data-toggle="modal" data-target="#verifyModal">
-          Verify Results
-      </button>
-  </div>
+<div class="text-center">
+    <h4 class="mb-4">Classification Results</h4>
+    
+    <div class="classification-badge">
+        {{ classifier.predicted_label }}
+    </div>
+    
+    <div class="confidence-meter">
+        <h6>Confidence Level</h6>
+        <div class="progress" style="height: 10px; border-radius: 5px;">
+            <div class="progress-bar bg-success" 
+                 style="width: {{ classifier.confidence|floatformat:0 }}%; border-radius: 5px;">
+            </div>
+        </div>
+        <small class="text-muted mt-2 d-block">{{ classifier.confidence|floatformat:2 }}% confident</small>
+    </div>
+    
+    <button type="button" class="btn btn-verify mt-4" data-toggle="modal" data-target="#verifyModal">
+        Verify Results
+    </button>
+</div>
 </div>
 
-<div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">  
+<!-- MODERN VERIFICATION MODAL -->
+<div class="modal fade verification-modal" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">  
 <div class="modal-dialog modal-dialog-centered" role="document">
   <div class="modal-content">
+    
     <div class="modal-header">
       <h5 class="modal-title" id="verifyModalLabel">Classification Verification</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="modal-body text-center">
-      <div class="classification-badge" style="margin: 0;">
-        {{ classifier.predicted_label|default:"-" }}
+    
+    <div class="modal-body">
+      <div class="modal-classification-result">
+        {{ classifier.predicted_label|default:"Unknown Plant" }}
       </div>
-      <p class="mt-3 text-muted">Does this classification look correct to you?</p>
+      
+      <div class="accuracy-indicator">
+        <span class="accuracy-text">AI Confidence: {{ classifier.confidence|floatformat:1 }}%</span>
+      </div>
+      
+      <p class="verification-question">
+        Great discovery! Want to learn more about caring for this plant or share it with the community?
+      </p>
+      
+      <div class="verification-actions">
+        <a href="{% url 'virtual-garden' %}" class="btn-virtual-garden">
+          Care Guide
+        </a>
+        <a href="{% url 'post-create' %}" class="btn-share-blog">
+          Share Discovery
+        </a>
+      </div>
+      
+      <p style="color: #888; font-size: 0.85rem; margin-top: 1.5rem;">
+        Explore plant care tips in our virtual garden or share your discovery to help our community grow together.
+      </p>
     </div>
-    <div class="modal-body text-center" style="padding-top: 0;">
-      <p class="mb-3">Want to share this discovery on the blog?</p>
-      <a href="{% url 'post-create' %}" class="btn btn-plant me-2">Share on Blog</a>
+    
+    <div class="verification-footer">
+      <button type="button" class="btn-modal-close" data-dismiss="modal">
+        Close
+      </button>
     </div>
-    <div class="modal-footer justify-content-center" style="border: none; padding-top: 0;">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-    </div>
+    
   </div>
 </div>
 </div>
