@@ -5,16 +5,16 @@ from keras.models import load_model
 import os
 import json
 
-model_path = '/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/2-iunie/Other versions/Modul-2-iunie-Adam.keras'
+model_path = '/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/4-iunie/Modul-4-iunie.keras'
 model = load_model(model_path)
 
-with open('/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/2-iunie/class_labels.json') as f:
+with open('/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/4-iunie/class_labels.json') as f:
     class_labels = json.load(f)
 
 def classify_image(img_path):
     try:
         print(f"📷 Clasific imaginea: {img_path}")
-        img = image.load_img(img_path, target_size=(224, 224))
+        img = image.load_img(img_path, target_size=(260, 260))
         img_array = image.img_to_array(img)
         img_array = np.expand_dims(img_array, axis=0)
 

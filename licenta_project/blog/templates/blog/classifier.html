@@ -5,501 +5,776 @@
 <style>
 /* Plant-themed classifier styles */
 .classifier-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  margin: 2rem 0;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  position: relative;
-  overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 .classifier-container::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="flower-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23flower-pattern)"/></svg>');
-  animation: float 20s ease-in-out infinite;
-  pointer-events: none;
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="flower-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23flower-pattern)"/></svg>');
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(180deg); }
-}
-
-.btn-virtual-garden {
-  background: linear-gradient(135deg, #673AB7, #5E35B1);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(103, 58, 183, 0.3);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-virtual-garden:hover {
-  background: linear-gradient(135deg, #5E35B1, #512DA8);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(103, 58, 183, 0.4);
-  color: white;
-  text-decoration: none;
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
 }
 
 .classifier-title {
-  color: white;
-  font-size: 2.5rem;
-  font-weight: 300;
-  margin-bottom: 0.5rem;
-  text-align: center;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .classifier-subtitle {
-  color: rgba(255,255,255,0.8);
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
 }
 
+/* MODERN UPLOAD AREA */
 .upload-area {
-  background: rgba(255,255,255,0.95);
-  border-radius: 15px;
-  padding: 2rem;
-  margin: 2rem 0;
-  backdrop-filter: blur(10px);
-  border: 2px dashed #4CAF50;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    margin: 2rem 0;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(76, 175, 80, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .upload-area:hover {
-  border-color: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(76, 175, 80, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(76, 175, 80, 0.08);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.upload-area.drag-over {
+    transform: translateY(-3px);
+    border-color: rgba(76, 175, 80, 0.3);
+    background: rgba(248,255,248,0.95);
+    box-shadow: 0 25px 50px rgba(76, 175, 80, 0.12);
+}
+
+.upload-content {
+    position: relative;
+    z-index: 2;
+}
+
+.upload-icon-container {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1.5rem auto;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover .upload-icon-container {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(76, 175, 80, 0.2);
 }
 
 .upload-icon {
-  font-size: 3rem;
-  color: #4CAF50;
-  margin-bottom: 1rem;
-  display: block;
-  text-align: center;
+    width: 32px;
+    height: 32px;
+    stroke: white;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.upload-title {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.upload-subtitle {
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    font-weight: 300;
+}
+
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.file-input-custom {
+    position: relative;
+    background: #fafafa;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 300px;
+}
+
+.file-input-custom:hover {
+    border-color: #4CAF50;
+    background: #f8fdf8;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.1);
+}
+
+.file-input-custom.has-file {
+    border-color: #4CAF50;
+    background: #f0f8f0;
+}
+
+.file-input-text {
+    color: #666;
+    font-size: 0.95rem;
+    flex: 1;
+    text-align: left;
+    font-weight: 300;
+}
+
+.file-input-custom.has-file .file-input-text {
+    color: #2e7d32;
+    font-weight: 400;
+}
+
+.file-input-button {
+    background: #4CAF50;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: all 0.3s ease;
+}
+
+.file-input-custom:hover .file-input-button {
+    background: #45a049;
+}
+
+#id_image {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.upload-formats {
+    color: #aaa;
+    font-size: 0.8rem;
+    margin-bottom: 1.2rem;
+    font-weight: 300;
+}
+
+.image-preview {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+}
+
+.preview-image {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 .btn-plant {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 30px;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-  position: relative;
-  z-index: 1;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    position: relative;
+    z-index: 1;
 }
 
 .btn-plant:hover {
-  background: linear-gradient(135deg, #45a049, #3d8b40);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
-  color: white;
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+    color: white;
 }
 
+.btn-plant:disabled {
+    background: linear-gradient(135deg, #cccccc, #bbbbbb);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* RESULTS SECTION */
 .result-card {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  margin: 2rem 0;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-  border: 1px solid #e8f5e8;
-  position: relative;
-  z-index: 1;
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    border: 1px solid #e8f5e8;
+    position: relative;
+    z-index: 1;
 }
 
 .result-image {
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease;
-  border: 3px solid #4CAF50;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+    border: 3px solid #4CAF50;
 }
 
 .result-image:hover {
-  transform: scale(1.02);
+    transform: scale(1.02);
 }
 
 .classification-badge {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  color: white;
-  padding: 15px 25px;
-  border-radius: 50px;
-  display: inline-block;
-  margin: 1rem 0;
-  font-size: 1.2rem;
-  font-weight: 500;
-  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    display: inline-block;
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
 }
 
 .confidence-meter {
-  background: #f0f8f0;
-  border-radius: 10px;
-  padding: 1rem;
-  margin: 1rem 0;
-  border-left: 4px solid #4CAF50;
+    background: #f0f8f0;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid #4CAF50;
 }
 
 .btn-verify {
-  background: linear-gradient(135deg, #FF9800, #F57C00);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 30px;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
-  position: relative;
-  z-index: 1;
+    background: linear-gradient(135deg, #FF9800, #F57C00);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+    position: relative;
+    z-index: 1;
 }
 
 .btn-verify:hover {
-  background: linear-gradient(135deg, #F57C00, #E65100);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
-  color: white;
+    background: linear-gradient(135deg, #F57C00, #E65100);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+    color: white;
 }
 
 /* MODERN MODAL STYLES */
 .modal-backdrop {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
 }
 
 .verification-modal .modal-dialog {
-  max-width: 450px;
-  margin: 5rem auto;
+    max-width: 450px;
+    margin: 5rem auto;
 }
 
 .verification-modal .modal-content {
-  border: none;
-  border-radius: 25px;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-  background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
-  overflow: hidden;
-  animation: modalSlideIn 0.4s ease-out;
-  position: relative;
+    border: none;
+    border-radius: 25px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+    overflow: hidden;
+    animation: modalSlideIn 0.4s ease-out;
+    position: relative;
 }
 
 .verification-modal .modal-content::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
 }
 
 .verification-modal .modal-header {
-  background: linear-gradient(135deg, #f8fff8, #ffffff);
-  border: none;
-  padding: 2rem 2rem 0 2rem;
-  text-align: center;
-  position: relative;
+    background: linear-gradient(135deg, #f8fff8, #ffffff);
+    border: none;
+    padding: 2rem 2rem 0 2rem;
+    text-align: center;
+    position: relative;
 }
 
-
-
 .verification-modal .modal-title {
-  color: #2e7d32;
-  font-size: 1.4rem;
-  font-weight: 400;
-  margin: 0;
-  text-align: center;
+    color: #2e7d32;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
 }
 
 .verification-modal .close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(76, 175, 80, 0.1);
-  border: none;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4CAF50;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  opacity: 0.7;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(76, 175, 80, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4CAF50;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    opacity: 0.7;
 }
 
 .verification-modal .close:hover {
-  background: rgba(76, 175, 80, 0.2);
-  transform: rotate(90deg);
-  opacity: 1;
+    background: rgba(76, 175, 80, 0.2);
+    transform: rotate(90deg);
+    opacity: 1;
 }
 
 .verification-modal .modal-body {
-  padding: 1.5rem 2rem;
-  text-align: center;
+    padding: 1.5rem 2rem;
+    text-align: center;
 }
 
 .modal-classification-result {
-  background: linear-gradient(135deg, #4CAF50, #66BB6A);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 1rem 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
-  border: 3px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
 .verification-question {
-  color: #555;
-  font-size: 1rem;
-  margin: 1.5rem 0;
-  line-height: 1.6;
+    color: #555;
+    font-size: 1rem;
+    margin: 1.5rem 0;
+    line-height: 1.6;
 }
 
 .verification-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin: 2rem 0 1rem 0;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0 1rem 0;
+}
+
+.btn-virtual-garden {
+    background: linear-gradient(135deg, #673AB7, #5E35B1);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 24px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(103, 58, 183, 0.3);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-virtual-garden:hover {
+    background: linear-gradient(135deg, #5E35B1, #512DA8);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(103, 58, 183, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 .btn-share-blog {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 24px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .btn-share-blog:hover {
-  background: linear-gradient(135deg, #45a049, #3d8b40);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
-  color: white;
-  text-decoration: none;
-}
-
-.btn-share-blog::before {
-  content: '';
-  width: 14px;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 3px;
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 .btn-modal-close {
-  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
-  color: #666;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 24px;
+    color: #666;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 .btn-modal-close:hover {
-  background: linear-gradient(135deg, #e8e8e8, #ddd);
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  color: #555;
+    background: linear-gradient(135deg, #e8e8e8, #ddd);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    color: #555;
 }
 
 .verification-footer {
-  padding: 0 2rem 2rem 2rem;
-  border: none;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+    padding: 0 2rem 2rem 2rem;
+    border: none;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .accuracy-indicator {
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid rgba(76, 175, 80, 0.2);
-  border-radius: 15px;
-  padding: 1rem;
-  margin: 1rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    border-radius: 15px;
+    padding: 1rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .accuracy-text {
-  color: #2e7d32;
-  font-size: 0.9rem;
-  font-weight: 500;
+    color: #2e7d32;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 @keyframes modalSlideIn {
-  from {
-      opacity: 0;
-      transform: translateY(-50px) scale(0.9);
-  }
-  to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Mobile responsiveness for modal */
+/* Mobile responsiveness */
 @media (max-width: 768px) {
-  .verification-modal .modal-dialog {
-      margin: 2rem 1rem;
-      max-width: none;
-  }
-  
-  .verification-modal .modal-header,
-  .verification-modal .modal-body,
-  .verification-footer {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-  }
-  
-  .verification-actions {
-      flex-direction: column;
-      align-items: center;
-  }
-  
-  .btn-share-blog,
-  .btn-modal-close {
-      width: 100%;
-      max-width: 200px;
-  }
+    .classifier-container {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+    
+    .classifier-title {
+        font-size: 2rem;
+    }
+    
+    .upload-area {
+        padding: 2rem 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .file-input-custom {
+        min-width: 260px;
+    }
+    
+    .verification-modal .modal-dialog {
+        margin: 2rem 1rem;
+        max-width: none;
+    }
+    
+    .verification-modal .modal-header,
+    .verification-modal .modal-body,
+    .verification-footer {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .verification-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-virtual-garden,
+    .btn-share-blog,
+    .btn-modal-close {
+        width: 100%;
+        max-width: 200px;
+    }
 }
 </style>
 
 <div class="classifier-container">
-<h1 class="classifier-title">Plant Classifier</h1>
-<p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
-
-<div class="upload-area text-center">
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-plant mt-3">
-            Analyze Plant
-        </button>
-    </form>
-</div>
+  <h1 class="classifier-title">Plant Classifier</h1>
+  <p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
+  
+  <div class="upload-area text-center" id="uploadArea">
+    <div class="upload-content">
+      <div class="upload-icon-container">
+        <svg class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+        </svg>
+      </div>
+      
+      <h3 class="upload-title">Upload Plant Image</h3>
+      <p class="upload-subtitle">Drag and drop your image here, or click to browse</p>
+      
+      <form method="POST" enctype="multipart/form-data" id="uploadForm">
+          {% csrf_token %}
+          
+          <div class="file-input-wrapper">
+            <div class="file-input-custom" id="fileInputCustom">
+              <span class="file-input-text" id="fileInputText">Choose image file</span>
+              <span class="file-input-button">Browse</span>
+              {{ form.image }}
+            </div>
+          </div>
+          
+          <div class="upload-formats">
+            Supported formats: JPG, PNG, JPEG (max 10MB)
+          </div>
+          
+          <div class="image-preview" id="imagePreview" style="display: none;">
+            <img id="previewImg" class="preview-image" src="" alt="Preview">
+          </div>
+          
+          <button type="submit" class="btn btn-plant mt-3" id="analyzeBtn" disabled>
+              Analyze Plant
+          </button>
+      </form>
+    </div>
+  </div>
 </div>
 
 {% if classifier %}
 <div class="result-card fade-in">
-<div class="text-center">
-    <h4 class="mb-4">Your Beautiful Upload</h4>
-    <img class="img-thumbnail result-image" src="{{ classifier.image.url }}" style="max-width: 350px;" />
-</div>
+  <div class="text-center">
+      <h4 class="mb-4">Your Beautiful Upload</h4>
+      <img class="img-thumbnail result-image" src="{{ classifier.image.url }}" style="max-width: 350px;" />
+  </div>
 </div>
 {% endif %}
 
 {% if classifier.predicted_label %}
 <div class="result-card fade-in">
-<div class="text-center">
-    <h4 class="mb-4">Classification Results</h4>
-    
-    <div class="classification-badge">
-        {{ classifier.predicted_label }}
-    </div>
-    
-    <div class="confidence-meter">
-        <h6>Confidence Level</h6>
-        <div class="progress" style="height: 10px; border-radius: 5px;">
-            <div class="progress-bar bg-success" 
-                 style="width: {{ classifier.confidence|floatformat:0 }}%; border-radius: 5px;">
-            </div>
-        </div>
-        <small class="text-muted mt-2 d-block">{{ classifier.confidence|floatformat:2 }}% confident</small>
-    </div>
-    
-    <button type="button" class="btn btn-verify mt-4" data-toggle="modal" data-target="#verifyModal">
-        Verify Results
-    </button>
-</div>
+  <div class="text-center">
+      <h4 class="mb-4">Classification Results</h4>
+      
+      <div class="classification-badge">
+          {{ classifier.predicted_label }}
+      </div>
+      
+      <div class="confidence-meter">
+          <h6>Confidence Level</h6>
+          <div class="progress" style="height: 10px; border-radius: 5px;">
+              <div class="progress-bar bg-success" 
+                   style="width: {{ classifier.confidence|floatformat:0 }}%; border-radius: 5px;">
+              </div>
+          </div>
+          <small class="text-muted mt-2 d-block">{{ classifier.confidence|floatformat:2 }}% confident</small>
+      </div>
+      
+      <button type="button" class="btn btn-verify mt-4" data-toggle="modal" data-target="#verifyModal">
+          Verify Results
+      </button>
+  </div>
 </div>
 
 <!-- MODERN VERIFICATION MODAL -->
 <div class="modal fade verification-modal" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">  
-<div class="modal-dialog modal-dialog-centered" role="document">
-  <div class="modal-content">
-    
-    <div class="modal-header">
-      <h5 class="modal-title" id="verifyModalLabel">Classification Verification</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    
-    <div class="modal-body">
-      <div class="modal-classification-result">
-        {{ classifier.predicted_label|default:"Unknown Plant" }}
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="verifyModalLabel">Classification Verification</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       
-      <div class="accuracy-indicator">
-        <span class="accuracy-text">AI Confidence: {{ classifier.confidence|floatformat:1 }}%</span>
+      <div class="modal-body">
+        <div class="modal-classification-result">
+          {{ classifier.predicted_label|default:"Unknown Plant" }}
+        </div>
+        
+        <div class="accuracy-indicator">
+          <span class="accuracy-text">AI Confidence: {{ classifier.confidence|floatformat:1 }}%</span>
+        </div>
+        
+        <p class="verification-question">
+          Great discovery! Want to learn more about caring for this plant or share it with the community?
+        </p>
+        
+        <div class="verification-actions">
+          <a href="{% url 'virtual-garden' %}" class="btn-virtual-garden">
+            Care Guide
+          </a>
+          <a href="{% url 'post-create' %}" class="btn-share-blog">
+            Share Discovery
+          </a>
+        </div>
+        
+        <p style="color: #888; font-size: 0.85rem; margin-top: 1.5rem;">
+          Explore plant care tips in our virtual garden or share your discovery to help our community grow together.
+        </p>
       </div>
       
-      <p class="verification-question">
-        Great discovery! Want to learn more about caring for this plant or share it with the community?
-      </p>
-      
-      <div class="verification-actions">
-        <a href="{% url 'virtual-garden' %}" class="btn-virtual-garden">
-          Care Guide
-        </a>
-        <a href="{% url 'post-create' %}" class="btn-share-blog">
-          Share Discovery
-        </a>
+      <div class="verification-footer">
+        <button type="button" class="btn-modal-close" data-dismiss="modal">
+          Close
+        </button>
       </div>
       
-      <p style="color: #888; font-size: 0.85rem; margin-top: 1.5rem;">
-        Explore plant care tips in our virtual garden or share your discovery to help our community grow together.
-      </p>
     </div>
-    
-    <div class="verification-footer">
-      <button type="button" class="btn-modal-close" data-dismiss="modal">
-        Close
-      </button>
-    </div>
-    
   </div>
 </div>
-</div>
 {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('id_image');
+    const fileInputCustom = document.getElementById('fileInputCustom');
+    const fileInputText = document.getElementById('fileInputText');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+
+    // Check if elements exist before adding event listeners
+    if (!fileInput || !fileInputCustom || !uploadArea) {
+        return;
+    }
+
+    // File input change handler - DOAR ACESTA
+    fileInput.addEventListener('change', function(e) {
+        handleFileSelect(e.target.files[0]);
+    });
+
+    // Drag and drop handlers
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+                // Setăm fișierele direct
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+                
+                handleFileSelect(file);
+            }
+        }
+    });
+
+    function handleFileSelect(file) {
+        if (!file) {
+            resetUploadArea();
+            return;
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file.');
+            resetUploadArea();
+            return;
+        }
+
+        // Validate file size (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File size must be less than 10MB.');
+            resetUploadArea();
+            return;
+        }
+
+        // Update UI
+        fileInputText.textContent = file.name;
+        fileInputCustom.classList.add('has-file');
+        analyzeBtn.disabled = false;
+
+        // Show preview
+        if (imagePreview && previewImg) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function resetUploadArea() {
+        fileInputText.textContent = 'Choose image file';
+        fileInputCustom.classList.remove('has-file');
+        if (imagePreview) {
+            imagePreview.style.display = 'none';
+        }
+        analyzeBtn.disabled = true;
+    }
+});
+</script>
 
 {% endblock %}
