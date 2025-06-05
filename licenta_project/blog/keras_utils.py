@@ -5,10 +5,10 @@ from keras.models import load_model
 import os
 import json
 
-model_path = '/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/4-iunie/Modul-4-iunie.keras'
+model_path = '/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/5-iunie/Modul-5-iunie.keras'
 model = load_model(model_path)
 
-with open('/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/4-iunie/class_labels.json') as f:
+with open('/Users/user/Documents/GitHub/LucrareLicenta-FII-UAIC/classifier/5-iunie/class_labels.json') as f:
     class_labels = json.load(f)
 
 def classify_image(img_path):

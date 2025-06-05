@@ -407,25 +407,6 @@
         color: #333;
       }
 
-      .community-rating {
-        background: #e8f5e8;
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
-        margin: 1rem 0;
-      }
-
-      .rating-stars {
-        color: #ff9800;
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .rating-text {
-        color: #666;
-        font-size: 0.9rem;
-      }
-
       @keyframes modalSlideIn {
         from {
           opacity: 0;
@@ -812,7 +793,7 @@
 
             <div class="care-section">
               <h6>Description</h6>
-              <p id="modalFlowerDescription" style="color: #555;"></p>
+              <div id="modalFlowerDescription" style="color: #555; line-height: 1.6;"></div>
             </div>
 
             <div class="difficulty-indicator">
@@ -838,11 +819,6 @@
                   <li><strong>Fertilizing:</strong> Monthly during growing season</li>
                 </ul>
               </div>
-            </div>
-
-            <div class="community-rating">
-              <div class="rating-stars">★★★★☆</div>
-              <div class="rating-text">Based on 23 community reviews</div>
             </div>
           </div>
         </div>
@@ -886,7 +862,7 @@
       // Care Modal
       function showCareModal(name, description, image) {
         document.getElementById('modalFlowerName').textContent = name;
-        document.getElementById('modalFlowerDescription').textContent = description;
+        document.getElementById('modalFlowerDescription').innerHTML = description;
         document.getElementById('modalFlowerImage').src = image;
         
         $('#careModal').modal('show');
