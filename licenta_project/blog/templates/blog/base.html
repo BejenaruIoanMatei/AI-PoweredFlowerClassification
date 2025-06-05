@@ -21,6 +21,237 @@
 
     <link rel="stylesheet" type="text/css" href="{%static 'blog/main.css'%}">
 
+    <!-- Additional styles for modals -->
+    <style>
+      /* LARGE MODAL STYLES */
+      .garden-modal .modal-dialog {
+        max-width: 700px;
+        margin: 3rem auto;
+      }
+
+      .garden-modal .modal-content {
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+        overflow: hidden;
+        animation: modalSlideIn 0.5s ease-out;
+        position: relative;
+      }
+
+      .garden-modal .modal-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
+      }
+
+      .garden-modal .modal-header {
+        background: linear-gradient(135deg, #f8fff8, #ffffff);
+        border: none;
+        padding: 2.5rem 2.5rem 1rem 2.5rem;
+        text-align: center;
+        position: relative;
+      }
+
+      .garden-modal .modal-title {
+        color: #2e7d32;
+        font-size: 1.6rem;
+        font-weight: 400;
+        margin: 0;
+        text-align: center;
+      }
+
+      .garden-modal .close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: rgba(76, 175, 80, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4CAF50;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+      }
+
+      .garden-modal .close:hover {
+        background: rgba(76, 175, 80, 0.2);
+        transform: rotate(90deg);
+        opacity: 1;
+      }
+
+      .garden-modal .modal-body {
+        padding: 1rem 2.5rem 2rem 2.5rem;
+        color: #333;
+        line-height: 1.7;
+      }
+
+      .modal-section {
+        margin-bottom: 2rem;
+      }
+
+      .modal-section h5 {
+        color: #2e7d32;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+      }
+
+      .modal-section p {
+        color: #555;
+        margin-bottom: 0.8rem;
+      }
+
+      .flower-list, .model-feature-list {
+        background: #fafafa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .flower-item, .model-feature {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .flower-item:last-child, .model-feature:last-child {
+        border-bottom: none;
+      }
+
+      .flower-name {
+        font-weight: 500;
+        color: #2e7d32;
+        margin-right: 1rem;
+      }
+
+      .flower-status {
+        background: #e8f5e8;
+        color: #2e7d32;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        margin-left: auto;
+      }
+
+      .season-section {
+        background: linear-gradient(135deg, #f8fff8, #ffffff);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-left: 4px solid #4CAF50;
+      }
+
+      .season-title {
+        color: #2e7d32;
+        font-weight: 500;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+
+      .season-activities {
+        list-style: none;
+        padding: 0;
+      }
+
+      .season-activities li {
+        padding: 0.4rem 0;
+        color: #555;
+        position: relative;
+        padding-left: 1.5rem;
+      }
+
+      .season-activities li::before {
+        content: '•';
+        color: #4CAF50;
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+      }
+
+      .garden-modal .modal-footer {
+        padding: 1rem 2.5rem 2rem 2.5rem;
+        border: none;
+        display: flex;
+        justify-content: center;
+      }
+
+      .btn-modal-close-large {
+        background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        color: #666;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      }
+
+      .btn-modal-close-large:hover {
+        background: linear-gradient(135deg, #e8e8e8, #ddd);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        color: #555;
+      }
+
+      .btn-virtual-garden-large {
+        background: linear-gradient(135deg, #673AB7, #5E35B1);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(103, 58, 183, 0.3);
+        text-decoration: none;
+        margin-right: 1rem;
+      }
+
+      .btn-virtual-garden-large:hover {
+        background: linear-gradient(135deg, #5E35B1, #512DA8);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(103, 58, 183, 0.4);
+        color: white;
+        text-decoration: none;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        .garden-modal .modal-dialog {
+          margin: 1rem;
+          max-width: none;
+        }
+        
+        .garden-modal .modal-header,
+        .garden-modal .modal-body,
+        .garden-modal .modal-footer {
+          padding-left: 1.5rem;
+          padding-right: 1.5rem;
+        }
+      }
+    </style>
+
     {% if title%}
     <title> Plant Garden - {{title}}</title>
     {%else%}
@@ -112,26 +343,25 @@
           </div>
           <div class="col-md-4">
             <div class="sidebar-enhanced">
-              <h3 class="sidebar-title"> Garden Hub</h3>
+              <h3 class="sidebar-title">Garden Hub</h3>
               <p class="sidebar-description">
                 Explore the wonderful world of plants and flowers through our AI-powered classification system.
               </p>
               <div class="plant-list">
                 <ul class="list-group">
-                  <li class="list-group-item plant-list-item">
-                    Latest Classifications
+                  <li class="list-group-item plant-list-item" data-toggle="modal" data-target="#flowerNewsModal" style="cursor: pointer;">
+                    Flower News
                   </li>
-                  <li class="list-group-item plant-list-item">
-                    Plant News
+                  <li class="list-group-item plant-list-item" data-toggle="modal" data-target="#modelNewsModal" style="cursor: pointer;">
+                    Model News
                   </li>
-                  <li class="list-group-item plant-list-item">
+                  <li class="list-group-item plant-list-item" data-toggle="modal" data-target="#seasonalGuideModal" style="cursor: pointer;">
                     Seasonal Guide
                   </li>
                   <li class="list-group-item plant-list-item">
-                    Top Contributors
-                  </li>
-                  <li class="list-group-item plant-list-item">
-                    Plant Care Tips
+                    <a href="{%url 'virtual-garden'%}" style="color: inherit; text-decoration: none; display: block;">
+                      Plant Care Tips
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -139,6 +369,194 @@
           </div>
         </div>
       </main>
+
+    <!-- FLOWER NEWS MODAL -->
+    <div class="modal fade garden-modal" id="flowerNewsModal" tabindex="-1" role="dialog" aria-labelledby="flowerNewsLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="flowerNewsLabel">Flower News & Updates</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-section">
+              <h5>Coming Soon to Plant Garden</h5>
+              <p>We're excited to announce new flower varieties that will be added to our AI classification system. Stay tuned for these beautiful additions:</p>
+              
+              <div class="flower-list">
+                <div class="flower-item">
+                  <span class="flower-name">Cherry Blossom</span>
+                  <span class="flower-status">March 2025</span>
+                </div>
+                <div class="flower-item">
+                  <span class="flower-name">Bird of Paradise</span>
+                  <span class="flower-status">March 2025</span>
+                </div>
+                <div class="flower-item">
+                  <span class="flower-name">Purple Iris</span>
+                  <span class="flower-status">April 2025</span>
+                </div>
+                <div class="flower-item">
+                  <span class="flower-name">White Magnolia</span>
+                  <span class="flower-status">April 2025</span>
+                </div>
+                <div class="flower-item">
+                  <span class="flower-name">Orange Marigold</span>
+                  <span class="flower-status">May 2025</span>
+                </div>
+                <div class="flower-item">
+                  <span class="flower-name">Blue Hydrangea</span>
+                  <span class="flower-status">May 2025</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="modal-section">
+              <h5>Recent Additions</h5>
+              <p>These flowers have been recently added to our database and are now available for classification:</p>
+              <p style="color: #2e7d32; font-weight: 500;">
+                Red Rose, Yellow Tulip, Purple Lavender, White Daisy, Pink Peony
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-modal-close-large" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL NEWS MODAL -->
+    <div class="modal fade garden-modal" id="modelNewsModal" tabindex="-1" role="dialog" aria-labelledby="modelNewsLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modelNewsLabel">AI Model Updates</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-section">
+              <h5>Latest Model: PlantNet AI v2.1</h5>
+              <p>We've upgraded our classification model with enhanced accuracy and new capabilities. Here's what's improved:</p>
+              
+              <div class="model-feature-list">
+                <div class="model-feature">
+                  <span style="color: #2e7d32; font-weight: 500;">95.2% Accuracy</span>
+                  <span style="margin-left: auto; color: #666;">Up from 91.8%</span>
+                </div>
+                <div class="model-feature">
+                  <span style="color: #2e7d32; font-weight: 500;">Faster Processing</span>
+                  <span style="margin-left: auto; color: #666;">3x speed improvement</span>
+                </div>
+                <div class="model-feature">
+                  <span style="color: #2e7d32; font-weight: 500;">50+ New Species</span>
+                  <span style="margin-left: auto; color: #666;">Expanded database</span>
+                </div>
+                <div class="model-feature">
+                  <span style="color: #2e7d32; font-weight: 500;">Better Edge Cases</span>
+                  <span style="margin-left: auto; color: #666;">Blurry/partial images</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="modal-section">
+              <h5>Technical Details</h5>
+              <p><strong>Architecture:</strong> Advanced Convolutional Neural Network with Transfer Learning</p>
+              <p><strong>Training Data:</strong> Over 2.5 million flower images from 15 countries</p>
+              <p><strong>Deployment:</strong> Cloud-based inference with automatic scaling</p>
+              <p><strong>Next Update:</strong> Real-time plant disease detection (Summer 2025)</p>
+            </div>
+            
+            <div class="modal-section">
+              <h5>Performance Metrics</h5>
+              <p>The new model shows significant improvements across all flower categories, with particularly strong performance in distinguishing between similar species like roses and peonies.</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-modal-close-large" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEASONAL GUIDE MODAL -->
+    <div class="modal fade garden-modal" id="seasonalGuideModal" tabindex="-1" role="dialog" aria-labelledby="seasonalGuideLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="seasonalGuideLabel">Seasonal Gardening Guide</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            
+            <div class="season-section">
+              <div class="season-title">Spring (March - May)</div>
+              <ul class="season-activities">
+                <li>Start seedlings indoors for warm-season flowers</li>
+                <li>Plant cool-season annuals like pansies and snapdragons</li>
+                <li>Prepare soil by adding compost and organic matter</li>
+                <li>Begin regular watering schedule as temperatures rise</li>
+                <li>Prune winter-damaged branches and dead-head spent blooms</li>
+                <li>Apply balanced fertilizer to established perennials</li>
+              </ul>
+            </div>
+
+            <div class="season-section">
+              <div class="season-title">Summer (June - August)</div>
+              <ul class="season-activities">
+                <li>Water early morning or evening to reduce evaporation</li>
+                <li>Apply mulch around plants to retain moisture</li>
+                <li>Provide shade for sensitive flowers during heat waves</li>
+                <li>Regular deadheading to encourage continuous blooming</li>
+                <li>Monitor for pests and diseases, treat as needed</li>
+                <li>Harvest flowers for bouquets and dried arrangements</li>
+              </ul>
+            </div>
+
+            <div class="season-section">
+              <div class="season-title">Autumn (September - November)</div>
+              <ul class="season-activities">
+                <li>Plant spring-blooming bulbs like tulips and daffodils</li>
+                <li>Collect seeds from favorite annual flowers</li>
+                <li>Reduce watering as temperatures cool down</li>
+                <li>Add compost and fallen leaves to garden beds</li>
+                <li>Cut back perennials after first frost</li>
+                <li>Protect tender plants with mulch or covers</li>
+              </ul>
+            </div>
+
+            <div class="season-section">
+              <div class="season-title">Winter (December - February)</div>
+              <ul class="season-activities">
+                <li>Plan next year's garden layout and order seeds</li>
+                <li>Care for indoor flowering plants and herbs</li>
+                <li>Maintain tools and equipment for spring readiness</li>
+                <li>Study plant catalogs and research new varieties</li>
+                <li>Create garden journal with notes from past year</li>
+                <li>Enjoy forced bulbs and winter-blooming houseplants</li>
+              </ul>
+            </div>
+
+            <p style="color: #666; font-size: 0.9rem; margin-top: 1.5rem; text-align: center;">
+              Remember that timing may vary based on your specific climate zone and local weather conditions.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <a href="{%url 'virtual-garden'%}" class="btn-virtual-garden-large">
+              Visit Plant Care Center
+            </a>
+            <button type="button" class="btn-modal-close-large" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 <script
   src="https://code.jquery.com/jquery-3.6.0.min.js"
   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="

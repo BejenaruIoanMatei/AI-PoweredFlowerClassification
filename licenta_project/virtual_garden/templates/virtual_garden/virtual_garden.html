@@ -21,139 +21,460 @@
     <link rel="stylesheet" type="text/css" href="{%static 'blog/main.css'%}">
 
     <style>
-      .garden-container {
+      /* MODERN VIRTUAL GARDEN STYLES */
+      .garden-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
         position: relative;
-        margin-bottom: 30px;
-        padding-top: 40px; /* Space for the locked flowers button */
+        overflow: hidden;
       }
-      .main-garden {
-        background-color: rgba(144, 238, 144, 0.2);
-        padding: 20px;
-        border-radius: 10px;
-        min-height: 450px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-      }
-      .locked-btn {
+
+      .garden-hero::before {
+        content: '';
         position: absolute;
-        top: 0;
-        right: 15px;
-        background-color: rgba(211, 211, 211, 0.7);
-        border-radius: 10px;
-        padding: 10px 15px;
-        cursor: pointer;
-        z-index: 10;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="flower-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23flower-pattern)"/></svg>');
+        animation: float 20s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+      }
+
+      .garden-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 1;
+      }
+
+      .garden-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* TAB NAVIGATION */
+      .garden-tabs {
+        background: white;
+        border-radius: 15px;
+        padding: 0.5rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         display: flex;
-        align-items: center;
+        gap: 0.5rem;
       }
-      .locked-btn:hover {
-        background-color: rgba(169, 169, 169, 0.8);
-      }
-      .locked-preview {
-        display: flex;
-        margin-left: 10px;
-      }
-      .locked-preview img {
-        width: 40px;
-        height: 40px;
-        margin-right: -10px;
-        border-radius: 50%;
-        border: 2px solid #fff;
-      }
-      .locked-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.7);
-        z-index: 100;
-        overflow: auto;
-      }
-      /* Modal container */
-      .modal-content {
-        background-color: #fff;
-        margin: 10% auto;
-        padding: 20px;
-        border-radius: 10px;
-        width: 80%;
-        max-width: 700px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-      
-      /* Container pentru floare și descriere */
-      .modal-flower-container {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-      }
-      
-      /* Stilul imaginii florii */
-      .modal-flower-image {
-        width: 150px; /* Ajustează dimensiunea imaginii dacă este necesar */
-        height: auto;
-        border-radius: 10px;
-        margin-right: 20px; /* Spațiu între imagine și descriere */
-      }
-      
-      /* Stilul descrierii florii */
-      .modal-flower-description {
-        max-width: 500px;
-      }
-      
-      /* Stilul pentru titlul florii */
-      .modal-flower-description h3 {
-        font-size: 24px;
-        margin-bottom: 10px;
-      }
-      
-      /* Stilul pentru descriere */
-      .modal-flower-description p {
-        font-size: 16px;
-        color: #555;
-      }
-      
-      .close-modal {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
+
+      .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        color: #666;
+        transition: all 0.3s ease;
         cursor: pointer;
       }
-      .close-modal:hover {
+
+      .tab-btn.active {
+        background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        color: white;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      }
+
+      .tab-btn:hover:not(.active) {
+        background: #f8f9fa;
         color: #333;
       }
-      .locked-flowers-container {
+
+      /* FLOWER CARDS */
+      .flowers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .flower-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .flower-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+      }
+
+      .flower-card.locked {
+        opacity: 0.6;
+        background: #fafafa;
+      }
+
+      .flower-card.locked .flower-image {
+        filter: grayscale(100%);
+      }
+
+      .flower-image-container {
+        text-align: center;
+        margin-bottom: 1rem;
+        position: relative;
+      }
+
+      .flower-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #f0f0f0;
+        transition: all 0.3s ease;
+      }
+
+      .flower-card:not(.locked) .flower-image {
+        border-color: #4CAF50;
+      }
+
+      .flower-name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #333;
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .flower-card.locked .flower-name {
+        color: #999;
+      }
+
+      .flower-difficulty {
         display: flex;
-        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem;
+        margin-bottom: 1rem;
+      }
+
+      .difficulty-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e0e0e0;
+      }
+
+      .difficulty-dot.filled {
+        background: #4CAF50;
+      }
+
+      .flower-actions {
+        display: flex;
+        gap: 0.8rem;
         justify-content: center;
       }
-      .section-title {
+
+      .btn-care-guide {
+        background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        border: none;
+        border-radius: 20px;
+        padding: 0.6rem 1.2rem;
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-care-guide:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      }
+
+      .btn-add-garden {
+        background: white;
+        border: 2px solid #4CAF50;
+        border-radius: 20px;
+        padding: 0.6rem 1.2rem;
+        color: #4CAF50;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-add-garden:hover {
+        background: #4CAF50;
+        color: white;
+      }
+
+      .unlock-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #ff9800;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .locked-badge {
+        background: #ccc;
+      }
+
+      /* SIDEBAR */
+      .garden-sidebar {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+        border: 1px solid #f0f0f0;
+      }
+
+      .sidebar-title {
+        color: #333;
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .community-stats {
+        background: #f8fff8;
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .stat-item:last-child {
+        border-bottom: none;
+      }
+
+      .stat-value {
+        color: #4CAF50;
+        font-weight: 500;
+      }
+
+      .recent-activity {
+        margin-top: 1.5rem;
+      }
+
+      .activity-item {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-user {
+        color: #4CAF50;
+        font-weight: 500;
+      }
+
+      /* CARE MODAL */
+      .care-modal .modal-dialog {
+        max-width: 600px;
+        margin: 3rem auto;
+      }
+
+      .care-modal .modal-content {
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+        overflow: hidden;
+        animation: modalSlideIn 0.5s ease-out;
+        position: relative;
+      }
+
+      .care-modal .modal-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
+      }
+
+      .care-modal .modal-header {
+        background: linear-gradient(135deg, #f8fff8, #ffffff);
+        border: none;
+        padding: 2rem 2rem 0 2rem;
         text-align: center;
-        margin-bottom: 20px;
-        font-weight: bold;
+        position: relative;
       }
-      .flower-item {
-        margin: 15px;
+
+      .care-modal .modal-title {
+        color: #2e7d32;
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin: 0;
         text-align: center;
       }
-      .flower {
-        max-width: 100%;
-        height: auto;
-        transition: transform 0.3s;
+
+      .care-modal .close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(76, 175, 80, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4CAF50;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        opacity: 0.7;
       }
-      .flower:hover {
-        transform: scale(1.05);
+
+      .care-modal .close:hover {
+        background: rgba(76, 175, 80, 0.2);
+        transform: rotate(90deg);
+        opacity: 1;
+      }
+
+      .care-modal .modal-body {
+        padding: 1rem 2rem 2rem 2rem;
+      }
+
+      .care-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .care-section h6 {
+        color: #2e7d32;
+        font-weight: 500;
+        margin-bottom: 0.8rem;
+        font-size: 1rem;
+      }
+
+      .care-tips {
+        background: #fafafa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .care-tips ul {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      .care-tips li {
+        color: #555;
+        margin-bottom: 0.5rem;
+      }
+
+      .difficulty-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin: 1rem 0;
+      }
+
+      .difficulty-label {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .community-rating {
+        background: #e8f5e8;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        margin: 1rem 0;
+      }
+
+      .rating-stars {
+        color: #ff9800;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .rating-text {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* MOBILE RESPONSIVE */
+      @media (max-width: 768px) {
+        .garden-hero {
+          padding: 2rem 1rem;
+          margin: 1rem 0;
+        }
+
+        .garden-hero h1 {
+          font-size: 2rem;
+        }
+
+        .garden-tabs {
+          flex-direction: column;
+          gap: 0.3rem;
+        }
+
+        .flowers-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .care-modal .modal-dialog {
+          margin: 1rem;
+          max-width: none;
+        }
+
+        .care-modal .modal-header,
+        .care-modal .modal-body {
+          padding-left: 1.5rem;
+          padding-right: 1.5rem;
+        }
       }
     </style>
 
     {% if title%}
-    <title>Django Blog - {{title}}</title>
+    <title>Plant Garden - {{title}}</title>
     {%else%}
-    <title>Django Blog</title>
+    <title>Plant Garden - Virtual Garden</title>
     {%endif%}
   </head>
 
@@ -161,7 +482,7 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="{%url 'blog-home'%}">Django Blog</a>
+          <a class="navbar-brand navbar-brand-enhanced mr-4" href="{%url 'blog-home'%}">Plant Garden</a>
           <button
             class="navbar-toggler"
             type="button"
@@ -177,12 +498,14 @@
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{%url 'blog-classifier'%}">Home</a>
               <a class="nav-item nav-link" href="{%url 'blog-home'%}">Blog</a>
+              <a class="nav-item nav-link" href="{%url 'activity-feed'%}">Activity</a>
               <a class="nav-item nav-link" href="{%url 'blog-about'%}">About</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
                 {%if user.is_authenticated%}
                     <a class="nav-item nav-link" href="{%url 'user-garden' user.username%}">My Garden</a>
+                    <a class="nav-item nav-link" href="{%url 'virtual-garden'%}">Flowers</a>
                     <a class="nav-item nav-link" href="{%url 'post-create'%}">New Post</a>
                     <a class="nav-item nav-link" href="{%url 'profile'%}">Profile</a>
                     <a class="nav-item nav-link" href="{%url 'logout'%}">Logout</a> 
@@ -195,141 +518,432 @@
         </div>
       </nav>
     </header>
-    <main role="main" class="container">
-        <div class="row">
-          <div class="col-md-12">
-            {%if messages %}
-                {%for message in messages%}
-                    <div class="alert alert-{{message.tags}}">
-                        {{message}}
-                    </div>
-                {%endfor%}
-            {%endif%}
-            <h2 class="text-center my-4">Learn more about the flowers you will discover!</h2>
 
-            <small class="text-center my-4">Press on each flower you have unlocked to see their infos</small>
+    <main role="main" class="container mt-5 pt-5">
+      <div class="row">
+        <div class="col-md-8">
+          {%if messages %}
+              {%for message in messages%}
+                  <div class="alert alert-{{message.tags}}">
+                      {{message}}
+                  </div>
+              {%endfor%}
+          {%endif%}
 
-            <div class="row garden-container">
-              <!-- LEFT SIDE - Unlocked Flowers -->
-              <div class="col-md-6 garden-section unlocked-garden">
-                <h4 class="section-title">Unlocked Flowers</h4>
-                {% for gf in garden_flowers %}
-                  {% if gf.unlocked %}
-                    <div class="flower-item text-center">
-                      <img
-                      src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
-                      class="flower"
-                      width="128"
-                      title="{{ gf.flower.name }}"
-                      data-name="{{ gf.flower.name }}"
-                      data-description="{{gf.flower.description|escape}}"
-                      data-image="{% get_media_prefix %}{{ gf.flower.icon_path }}"
-                      onclick="showFlowerModal(this)"
-                      aria-label="Click to learn more about {{ gf.flower.name }}"
-                    />
-                    
-                      <h5>{{ gf.flower.name }}</h5>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-              
-              </div>
-              
-              <!-- RIGHT SIDE - Locked Flowers -->
-              <div class="col-md-6 garden-section locked-garden">
-                <h4 class="section-title">To be unlocked</h4>
-                {% for gf in garden_flowers %}
+          <!-- HERO SECTION -->
+          <div class="garden-hero">
+            <h1>Virtual Garden</h1>
+            <p>Discover, learn, and care for beautiful flowers with our community</p>
+          </div>
+
+          <!-- TAB NAVIGATION -->
+          <div class="garden-tabs">
+            <button class="tab-btn active" onclick="showTab('all')">All Flowers</button>
+            <button class="tab-btn" onclick="showTab('unlocked')">My Collection</button>
+            <button class="tab-btn" onclick="showTab('care')">Care Guide</button>
+            <button class="tab-btn" onclick="showTab('community')">Community</button>
+          </div>
+
+          <!-- ALL FLOWERS TAB -->
+          <div id="all-tab" class="tab-content">
+            <div class="flowers-grid">
+              {% for gf in garden_flowers %}
+                <div class="flower-card {% if not gf.unlocked %}locked{% endif %}">
                   {% if not gf.unlocked %}
-                    <div class="flower-item text-center">
-                      <img src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
-                          style="filter: grayscale(100%) opacity(0.6);"
-                          class="flower"
-                          width="128"
-                          title="{{ gf.flower.name }}" />
-                      <h5>{{ gf.flower.name }}</h5>
+                    <div class="unlock-badge locked-badge">Locked</div>
+                  {% else %}
+                    <div class="unlock-badge">Unlocked</div>
+                  {% endif %}
+                  
+                  <div class="flower-image-container">
+                    <img
+                      src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                      class="flower-image"
+                      alt="{{ gf.flower.name }}"
+                    />
+                  </div>
+                  
+                  <div class="flower-name">{{ gf.flower.name }}</div>
+                  
+                  <div class="flower-difficulty" title="Care Difficulty">
+                    <div class="difficulty-dot filled"></div>
+                    <div class="difficulty-dot filled"></div>
+                    <div class="difficulty-dot {% if gf.flower.name == 'Rose' %}filled{% endif %}"></div>
+                    <div class="difficulty-dot"></div>
+                    <div class="difficulty-dot"></div>
+                  </div>
+                  
+                  {% if gf.unlocked %}
+                    <div class="flower-actions">
+                      <button class="btn-care-guide" 
+                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                        Care Guide
+                      </button>
+                      <button class="btn-add-garden">Add to Garden</button>
+                    </div>
+                  {% else %}
+                    <div class="flower-actions">
+                      <button class="btn-care-guide" style="opacity: 0.5; cursor: not-allowed;" disabled>
+                        Classify to Unlock
+                      </button>
                     </div>
                   {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- MY COLLECTION TAB -->
+          <div id="unlocked-tab" class="tab-content" style="display: none;">
+            <div class="flowers-grid">
+              {% for gf in garden_flowers %}
+                {% if gf.unlocked %}
+                  <div class="flower-card">
+                    <div class="unlock-badge">In Collection</div>
+                    
+                    <div class="flower-image-container">
+                      <img
+                        src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                        class="flower-image"
+                        alt="{{ gf.flower.name }}"
+                      />
+                    </div>
+                    
+                    <div class="flower-name">{{ gf.flower.name }}</div>
+                    
+                    <div class="flower-difficulty" title="Care Difficulty">
+                      <div class="difficulty-dot filled"></div>
+                      <div class="difficulty-dot filled"></div>
+                      <div class="difficulty-dot {% if gf.flower.name == 'Rose' %}filled{% endif %}"></div>
+                      <div class="difficulty-dot"></div>
+                      <div class="difficulty-dot"></div>
+                    </div>
+                    
+                    <div class="flower-actions">
+                      <button class="btn-care-guide" 
+                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                        Care Guide
+                      </button>
+                      <button class="btn-add-garden">Remove</button>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- CARE GUIDE TAB -->
+          <div id="care-tab" class="tab-content" style="display: none;">
+            <div class="care-tips">
+              <h5 style="color: #2e7d32; margin-bottom: 1rem;">General Plant Care Tips</h5>
+              <ul>
+                <li><strong>Watering:</strong> Check soil moisture before watering. Most plants prefer slightly moist soil.</li>
+                <li><strong>Light:</strong> Provide adequate light based on plant requirements. Rotate plants weekly.</li>
+                <li><strong>Fertilizing:</strong> Feed during growing season (spring/summer) with balanced fertilizer.</li>
+                <li><strong>Pruning:</strong> Remove dead or diseased parts regularly to promote healthy growth.</li>
+                <li><strong>Repotting:</strong> Repot when roots outgrow the container, usually every 1-2 years.</li>
+              </ul>
+            </div>
+            
+            <div class="flowers-grid">
+              {% for gf in garden_flowers %}
+                {% if gf.unlocked %}
+                  <div class="flower-card">
+                    <div class="flower-image-container">
+                      <img
+                        src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                        class="flower-image"
+                        alt="{{ gf.flower.name }}"
+                      />
+                    </div>
+                    <div class="flower-name">{{ gf.flower.name }}</div>
+                    <div class="flower-actions">
+                      <button class="btn-care-guide" 
+                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                        Detailed Care
+                      </button>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- COMMUNITY TAB -->
+          <div id="community-tab" class="tab-content" style="display: none;">
+            <div class="community-stats">
+              <h5 style="color: #2e7d32; margin-bottom: 1rem;">Community Statistics</h5>
+              <div class="stat-item">
+                <span>Total Members</span>
+                <span class="stat-value">{{ total_users|default:"Loading..." }}</span>
+              </div>
+              <div class="stat-item">
+                <span>Recent Activities</span>
+                <span class="stat-value">{{ recent_activities|length|default:"0" }}</span>
+              </div>
+              <div class="stat-item">
+                <span>Available Flowers</span>
+                <span class="stat-value">{{ garden_flowers|length }}</span>
+              </div>
+              <div class="stat-item">
+                <span>Active This Week</span>
+                <span class="stat-value">{{ active_users|default:"Loading..." }}</span>
+              </div>
+            </div>
+            
+            {% if recent_activities %}
+              <div class="community-stats" style="margin-top: 1.5rem;">
+                <h5 style="color: #2e7d32; margin-bottom: 1rem;">Latest Community Activity</h5>
+                {% for activity in recent_activities|slice:":6" %}
+                  <div class="activity-item">
+                    <a href="{% url 'user-garden' activity.user.username %}" class="activity-user">@{{ activity.user.username }}</a>
+                    {{ activity.message }}
+                    <div style="font-size: 0.8rem; color: #999; margin-top: 0.3rem;">
+                      {{ activity.timestamp|timesince }} ago
+                    </div>
+                  </div>
                 {% endfor %}
               </div>
+            {% endif %}
+            
+            <div class="flowers-grid">
+              {% for gf in garden_flowers %}
+                <div class="flower-card {% if not gf.unlocked %}locked{% endif %}">
+                  <div class="flower-image-container">
+                    <img
+                      src="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                      class="flower-image"
+                      alt="{{ gf.flower.name }}"
+                    />
+                  </div>
+                  <div class="flower-name">{{ gf.flower.name }}</div>
+                  <div class="community-rating">
+                    <div class="rating-stars">★★★★☆</div>
+                    <div class="rating-text">Community Rating: 4.2/5</div>
+                  </div>
+                  {% if gf.unlocked %}
+                    <div class="flower-actions">
+                      <button class="btn-care-guide" 
+                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                        View Details
+                      </button>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>
-      </main>
 
-      <div id="flowerModal" class="locked-modal">
-        <div class="modal-content">
-          <span class="close-modal" onclick="closeFlowerModal()">&times;</span>
-          
-          <div class="modal-flower-container">
-            <img id="modalFlowerImage" src="" alt="" class="modal-flower-image">
-            <div class="modal-flower-description">
-              <h3 id="modalFlowerName"></h3>
-              <div class="modal-flower-description">
-                <h3 id="modalFlowerName"></h3>
-                <div id="modalFlowerDescription"></div>
-              </div>              
+        <!-- SIDEBAR -->
+        <div class="col-md-4">
+          <div class="garden-sidebar">
+            <h3 class="sidebar-title">Quick Stats</h3>
+            
+            <div class="community-stats">
+              <div class="stat-item">
+                <span>Your Collection</span>
+                <span class="stat-value">{{ unlocked_count|default:"0" }} flowers</span>
+              </div>
+              <div class="stat-item">
+                <span>Total Available</span>
+                <span class="stat-value">{{ garden_flowers|length }} species</span>
+              </div>
+              <div class="stat-item">
+                <span>Completion</span>
+                <span class="stat-value">
+                  {% if garden_flowers|length > 0 %}
+                    {% widthratio unlocked_count garden_flowers|length 100 %}%
+                  {% else %}
+                    0%
+                  {% endif %}
+                </span>
+              </div>
+              <div class="stat-item">
+                <span>Community Members</span>
+                <span class="stat-value">{{ total_users|default:"Loading..." }}</span>
+              </div>
+            </div>
+
+            <div class="recent-activity">
+              <h4 style="color: #333; font-size: 1.1rem; margin-bottom: 1rem;">Recent Community Activity</h4>
+              {% if recent_activities %}
+                {% for activity in recent_activities|slice:":4" %}
+                  <div class="activity-item">
+                    <a href="{% url 'user-garden' activity.user.username %}" class="activity-user">@{{ activity.user.username }}</a>
+                    {{ activity.message|truncatewords:8 }}
+                    <div style="font-size: 0.8rem; color: #999; margin-top: 0.3rem;">
+                      {{ activity.timestamp|timesince }} ago
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="activity-item">
+                  No recent activity available
+                </div>
+              {% endif %}
+              
+              <div style="text-align: center; margin-top: 1rem;">
+                <a href="{% url 'activity-feed' %}" style="color: #4CAF50; text-decoration: none; font-size: 0.9rem;">
+                  View All Activity →
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
-      
+    </main>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
+    <!-- CARE MODAL -->
+    <div class="modal fade care-modal" id="careModal" tabindex="-1" role="dialog" aria-labelledby="careModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="careModalLabel">Care Guide</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center" style="margin-bottom: 1.5rem;">
+              <img id="modalFlowerImage" src="" alt="" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #4CAF50;">
+              <h4 id="modalFlowerName" style="color: #2e7d32; margin-top: 1rem;"></h4>
+            </div>
+
+            <div class="care-section">
+              <h6>Description</h6>
+              <p id="modalFlowerDescription" style="color: #555;"></p>
+            </div>
+
+            <div class="difficulty-indicator">
+              <span class="difficulty-label">Care Difficulty:</span>
+              <div class="flower-difficulty">
+                <div class="difficulty-dot filled"></div>
+                <div class="difficulty-dot filled"></div>
+                <div class="difficulty-dot"></div>
+                <div class="difficulty-dot"></div>
+                <div class="difficulty-dot"></div>
+              </div>
+              <span style="color: #666; font-size: 0.9rem;">Easy</span>
+            </div>
+
+            <div class="care-section">
+              <h6>Care Instructions</h6>
+              <div class="care-tips">
+                <ul>
+                  <li><strong>Watering:</strong> Water when top inch of soil feels dry</li>
+                  <li><strong>Light:</strong> Bright, indirect sunlight for 6-8 hours daily</li>
+                  <li><strong>Temperature:</strong> Keep between 65-75°F (18-24°C)</li>
+                  <li><strong>Humidity:</strong> Moderate humidity, 40-60%</li>
+                  <li><strong>Fertilizing:</strong> Monthly during growing season</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="community-rating">
+              <div class="rating-stars">★★★★☆</div>
+              <div class="rating-text">Based on 23 community reviews</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
     
-    <!-- Modal Control Script -->
     <script>
-
-      {% comment %} function decodeHTML(html) {
-        const txt = document.createElement('textarea');
-        txt.innerHTML = html;
-        return txt.value;
-      }
-       {% endcomment %}
-
-      function showFlowerModal(element) {
-        var name = element.getAttribute('data-name');
-        var description = element.getAttribute('data-description');
-        var image = element.getAttribute('data-image');
-      
-        document.getElementById('modalFlowerName').innerText = name;
-        document.getElementById('modalFlowerImage').src = image;
-      
-        document.getElementById('modalFlowerDescription').innerHTML = description;
-      
-        document.getElementById('flowerModal').style.display = "block";
-      }
-      
-    
-      function closeFlowerModal() {
-        // Închide modalul
-        document.getElementById('flowerModal').style.display = "none";
-      }
-    
-      // Închide modalul dacă se face click în afara lui
-      window.onclick = function(event) {
-        var modal = document.getElementById('flowerModal');
-        if (event.target == modal) {
-          modal.style.display = "none";
+      // Tab Navigation
+      function showTab(tabName) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.style.display = 'none';
+        });
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Show selected tab
+        if (tabName === 'all') {
+          document.getElementById('all-tab').style.display = 'block';
+          document.querySelector('.tab-btn').classList.add('active');
+        } else if (tabName === 'unlocked') {
+          document.getElementById('unlocked-tab').style.display = 'block';
+          document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        } else if (tabName === 'care') {
+          document.getElementById('care-tab').style.display = 'block';
+          document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        } else if (tabName === 'community') {
+          document.getElementById('community-tab').style.display = 'block';
+          document.querySelectorAll('.tab-btn')[3].classList.add('active');
         }
       }
+
+      // Care Modal
+      function showCareModal(name, description, image) {
+        document.getElementById('modalFlowerName').textContent = name;
+        document.getElementById('modalFlowerDescription').textContent = description;
+        document.getElementById('modalFlowerImage').src = image;
+        
+        $('#careModal').modal('show');
+      }
+
+      // Add to Garden functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        // Handle Add to Garden buttons
+        document.querySelectorAll('.btn-add-garden').forEach(button => {
+          button.addEventListener('click', function() {
+            if (this.textContent === 'Add to Garden') {
+              this.textContent = 'Added!';
+              this.style.background = '#4CAF50';
+              this.style.color = 'white';
+              this.style.border = '2px solid #4CAF50';
+              
+              // Reset after 2 seconds
+              setTimeout(() => {
+                this.textContent = 'Remove';
+                this.style.background = '#ff5722';
+                this.style.borderColor = '#ff5722';
+              }, 2000);
+            } else if (this.textContent === 'Remove') {
+              this.textContent = 'Add to Garden';
+              this.style.background = 'white';
+              this.style.color = '#4CAF50';
+              this.style.border = '2px solid #4CAF50';
+            }
+          });
+        });
+
+        // Animate cards on scroll
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = '0';
+              entry.target.style.transform = 'translateY(20px)';
+              entry.target.style.transition = 'all 0.6s ease';
+              
+              setTimeout(() => {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+              }, 100);
+            }
+          });
+        }, observerOptions);
+
+        // Observe all flower cards
+        document.querySelectorAll('.flower-card').forEach(card => {
+          observer.observe(card);
+        });
+      });
     </script>
-    
   </body>
 </html>

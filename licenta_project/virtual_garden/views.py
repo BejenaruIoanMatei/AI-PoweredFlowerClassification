@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import VirtualGarden, GardenFlower, Flower, GardenSlot
 from django.contrib.auth.models import User
+from blog.models import Activity  # Înlocuiește cu numele real al modelului tău
 
 class VirtualGardenView(LoginRequiredMixin, TemplateView):
     template_name = 'virtual_garden/virtual_garden.html'
@@ -15,6 +18,18 @@ class VirtualGardenView(LoginRequiredMixin, TemplateView):
         garden, created = VirtualGarden.objects.get_or_create(user=self.request.user)
         context['garden'] = garden
         context['garden_flowers'] = GardenFlower.objects.filter(garden=garden).select_related('flower')
+        
+        # Add community data
+        context['recent_activities'] = Activity.objects.select_related('user').order_by('-timestamp')[:10]
+        context['total_users'] = User.objects.count()
+        context['active_users'] = User.objects.filter(
+            last_login__gte=timezone.now() - timedelta(days=7)
+        ).count()
+        
+        # Calculate unlocked count for current user
+        unlocked_count = context['garden_flowers'].filter(unlocked=True).count()
+        context['unlocked_count'] = unlocked_count
+        
         return context
 
 @login_required
