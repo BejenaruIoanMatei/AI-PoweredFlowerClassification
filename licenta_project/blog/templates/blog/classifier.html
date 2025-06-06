@@ -5,7 +5,7 @@
 <style>
 /* Plant-themed classifier styles */
 .classifier-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4CAF50 0%, #fffdaf 100%);
     border-radius: 20px;
     padding: 3rem 2rem;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
@@ -678,7 +678,6 @@
   </div>
 </div>
 
-<!-- MODERN VERIFICATION MODAL -->
 <div class="modal fade verification-modal" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">  
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -738,17 +737,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewImg = document.getElementById('previewImg');
     const analyzeBtn = document.getElementById('analyzeBtn');
 
-    // Check if elements exist before adding event listeners
     if (!fileInput || !fileInputCustom || !uploadArea) {
         return;
     }
 
-    // File input change handler
     fileInput.addEventListener('change', function(e) {
         handleFileSelect(e.target.files[0]);
     });
 
-    // Drag and drop handlers
     uploadArea.addEventListener('dragover', function(e) {
         e.preventDefault();
         uploadArea.classList.add('drag-over');
@@ -776,32 +772,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Initialize confidence bar if it exists
     const confidenceBar = document.getElementById('confidenceBar');
     if (confidenceBar) {
         const confidence = parseFloat(confidenceBar.getAttribute('data-confidence'));
-        console.log('Confidence value:', confidence); // Debug
+        console.log('Confidence value:', confidence);
         
         if (!isNaN(confidence) && confidence >= 0) {
-            // Convert to percentage if value is between 0-1 (decimal format)
             let confidencePercent;
             if (confidence <= 1) {
-                confidencePercent = confidence * 100; // Convert 0.97 to 97
+                confidencePercent = confidence * 100;
             } else {
-                confidencePercent = confidence; // Already in percentage format
+                confidencePercent = confidence;
             }
             
-            console.log('Confidence as percentage:', confidencePercent); // Debug
+            console.log('Confidence as percentage:', confidencePercent);
             
-            // Set initial width to 0, then animate to the actual confidence
             confidenceBar.style.width = '0%';
             
-            // Animate the bar after a small delay
             setTimeout(function() {
                 confidenceBar.style.width = Math.min(confidencePercent, 100) + '%';
             }, 500);
         } else {
-            console.log('Invalid confidence value or data not found'); // Debug
+            console.log('Invalid confidence value or data not found');
         }
     }
 
@@ -811,26 +803,22 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Validate file type
         if (!file.type.startsWith('image/')) {
             alert('Please select a valid image file.');
             resetUploadArea();
             return;
         }
 
-        // Validate file size (10MB)
         if (file.size > 10 * 1024 * 1024) {
             alert('File size must be less than 10MB.');
             resetUploadArea();
             return;
         }
 
-        // Update UI
         fileInputText.textContent = file.name;
         fileInputCustom.classList.add('has-file');
         analyzeBtn.disabled = false;
 
-        // Show preview
         if (imagePreview && previewImg) {
             const reader = new FileReader();
             reader.onload = function(e) {

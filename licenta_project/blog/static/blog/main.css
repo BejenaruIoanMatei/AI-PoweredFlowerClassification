@@ -420,12 +420,6 @@ body {
     }
 }
 
-/* ===== HEADING DECORATIONS ===== */
-h1::before, h2::before, h3::before {
-    content: '🌿 ';
-    opacity: 0.6;
-    margin-right: 0.5rem;
-}
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {

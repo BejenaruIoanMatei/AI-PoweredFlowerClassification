@@ -16,7 +16,7 @@
     }
 
     .garden-hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #4CAF50 0%, #fffec8 100%);
       border-radius: 20px;
       padding: 3rem 2rem;
       margin: 2rem 0;
@@ -404,19 +404,16 @@
   </header>
 
   <main role="main" class="container" style="margin-top: 80px;">
-    <!-- GARDEN HERO -->
     <div class="garden-hero">
       <h1 class="garden-title">{{ garden_owner.username }}'s Garden</h1>
       <p class="garden-subtitle">Design your perfect botanical space</p>
     </div>
 
-    <!-- INSTRUCTIONS -->
     <div class="instructions">
       <p>Select a plant from your collection and click on an empty pot to plant it. Double-click planted flowers to remove them.</p>
     </div>
 
     <div class="row">
-      <!-- LEFT - Available Plants -->
       <div class="col-md-4">
         <div class="plant-section">
           <h3 class="section-title">Available Plants</h3>
@@ -454,7 +451,6 @@
         </div>
       </div>
 
-      <!-- CENTER - Interactive Garden -->
       <div class="col-md-8">
         <div class="garden-area">
           <h3 class="section-title">Free Garden Canvas</h3>
@@ -472,7 +468,6 @@
                 Drop here to remove
               </div>
               
-              <!-- Hidden inputs for flower positions -->
               {% for slot in slots %}
                 <input type="hidden" name="flower_{{ slot.slot_index }}" id="slot-{{ slot.slot_index }}" value="{% if slot.flower %}{{ slot.flower.id }}{% endif %}">
                 <input type="hidden" name="pos_x_{{ slot.slot_index }}" id="pos-x-{{ slot.slot_index }}" value="{{ slot.pos_x|default:'' }}">
@@ -512,7 +507,6 @@
       const removeZone = document.getElementById('removeZone');
       const plantedCountEl = document.getElementById('plantedCount');
 
-      // Load existing flowers from form data
       function loadExistingFlowers() {
         {% for slot in slots %}
           {% if slot.flower %}
@@ -534,16 +528,13 @@
         updatePlantedCount();
       }
 
-      // Plant selection
       document.querySelectorAll('.flower-selectable').forEach(plant => {
         plant.addEventListener('click', function(e) {
           e.preventDefault();
-          console.log('Flower clicked:', this.dataset.flowerName); // Debug
+          console.log('Flower clicked:', this.dataset.flowerName);
           
-          // Remove previous selection
           document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
           
-          // Select current plant
           this.classList.add('selected');
           selectedFlower = {
             id: this.dataset.flowerId,
@@ -552,53 +543,46 @@
             element: this
           };
 
-          console.log('Selected flower:', selectedFlower); // Debug
+          console.log('Selected flower:', selectedFlower);
 
-          // Highlight garden canvas
           gardenCanvas.classList.add('can-plant');
         });
       });
 
-      // Garden canvas click - plant flower
       gardenCanvas.addEventListener('click', function(e) {
-        console.log('Canvas clicked, selectedFlower:', selectedFlower); // Debug
+        console.log('Canvas clicked, selectedFlower:', selectedFlower);
         
         if (!selectedFlower) {
-          console.log('No flower selected'); // Debug
+          console.log('No flower selected');
           return;
         }
         
-        // Don't plant if clicking on existing flower or UI elements
         if (e.target.classList.contains('planted-flower-free') || 
             e.target.classList.contains('garden-guide') ||
             e.target.classList.contains('garden-stats') ||
             e.target.classList.contains('remove-zone')) {
-          console.log('Clicked on UI element, ignoring'); // Debug
+          console.log('Clicked on UI element, ignoring');
           return;
         }
 
-        console.log('Planting flower...'); // Debug
+        console.log('Planting flower...');
 
         const rect = gardenCanvas.getBoundingClientRect();
-        const x = e.clientX - rect.left - 40; // Center the flower
+        const x = e.clientX - rect.left - 40;
         const y = e.clientY - rect.top - 40;
 
-        // Ensure flower stays within bounds
         const maxX = gardenCanvas.offsetWidth - 80;
         const maxY = gardenCanvas.offsetHeight - 80;
         const finalX = Math.max(0, Math.min(x, maxX));
         const finalY = Math.max(0, Math.min(y, maxY));
 
-        console.log('Planting at position:', finalX, finalY); // Debug
+        console.log('Planting at position:', finalX, finalY);
 
-        // Create planted flower
         const slotIndex = getNextAvailableSlot();
         createPlantedFlower(selectedFlower, finalX, finalY, slotIndex);
 
-        // Hide from selector (remove the element completely to avoid duplicates)
         selectedFlower.element.remove();
 
-        // Clear selection
         selectedFlower = null;
         document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
         gardenCanvas.classList.remove('can-plant');
@@ -607,7 +591,7 @@
       });
 
       function createPlantedFlower(flowerData, x, y, slotIndex) {
-        console.log('Creating planted flower:', flowerData.name, 'at slot:', slotIndex); // Debug
+        console.log('Creating planted flower:', flowerData.name, 'at slot:', slotIndex);
         
         const flowerEl = document.createElement('img');
         flowerEl.src = flowerData.icon;
@@ -618,14 +602,12 @@
         flowerEl.style.top = y + 'px';
         flowerEl.dataset.flowerId = flowerData.id;
         flowerEl.dataset.slotIndex = slotIndex;
-        flowerEl.dataset.flowerName = flowerData.name; // Add flower name for easier removal
+        flowerEl.dataset.flowerName = flowerData.name;
 
-        // Add drag functionality
         makeDraggable(flowerEl);
 
         gardenCanvas.appendChild(flowerEl);
 
-        // Update form inputs
         const slotInput = document.getElementById('slot-' + slotIndex);
         const posXInput = document.getElementById('pos-x-' + slotIndex);
         const posYInput = document.getElementById('pos-y-' + slotIndex);
@@ -640,7 +622,7 @@
           slotIndex: slotIndex
         });
         
-        console.log('Flower created successfully'); // Debug
+        console.log('Flower created successfully');
       }
 
       function makeDraggable(element) {
@@ -671,7 +653,6 @@
           const newLeft = startLeft + dx;
           const newTop = startTop + dy;
 
-          // Keep within bounds
           const maxX = gardenCanvas.offsetWidth - 80;
           const maxY = gardenCanvas.offsetHeight - 80;
           
@@ -686,7 +667,6 @@
           element.classList.remove('dragging');
           removeZone.classList.remove('active');
 
-          // Check if dropped on remove zone
           const removeRect = removeZone.getBoundingClientRect();
           const elementRect = element.getBoundingClientRect();
           
@@ -697,7 +677,6 @@
             
             removeFlower(element);
           } else {
-            // Update position in form
             const slotIndex = element.dataset.slotIndex;
             document.getElementById('pos-x-' + slotIndex).value = parseInt(element.style.left);
             document.getElementById('pos-y-' + slotIndex).value = parseInt(element.style.top);
@@ -706,27 +685,23 @@
           draggedFlower = null;
         });
 
-        // Double click to remove
         element.addEventListener('dblclick', function() {
           removeFlower(element);
         });
       }
 
       function removeFlower(flowerElement) {
-        console.log('Removing flower'); // Debug
+        console.log('Removing flower');
         
         const slotIndex = flowerElement.dataset.slotIndex;
         const flowerId = flowerElement.dataset.flowerId;
         const flowerName = flowerElement.dataset.flowerName || flowerElement.alt;
         const flowerIcon = flowerElement.src;
 
-        // Check if flower already exists in selector to avoid duplicates
         const existingFlower = document.querySelector(`[data-flower-id="${flowerId}"].flower-selectable`);
         if (!existingFlower) {
-          // Recreate flower in available section only if it doesn't exist
           const unlockedContainer = document.getElementById('unlocked-flowers');
           if (unlockedContainer) {
-            // Create new flower item
             const flowerItem = document.createElement('div');
             flowerItem.className = 'flower-item flower-selectable';
             flowerItem.dataset.flowerId = flowerId;
@@ -734,30 +709,24 @@
             flowerItem.dataset.flowerName = flowerName;
             flowerItem.style.display = 'block';
 
-            // Create image
             const img = document.createElement('img');
             img.src = flowerIcon;
             img.className = 'flower-image';
             img.alt = flowerName;
 
-            // Create name
             const nameP = document.createElement('p');
             nameP.className = 'flower-name';
             nameP.textContent = flowerName;
 
-            // Assemble
             flowerItem.appendChild(img);
             flowerItem.appendChild(nameP);
 
-            // Add click event
             flowerItem.addEventListener('click', function(e) {
               e.preventDefault();
               console.log('Flower clicked:', this.dataset.flowerName);
               
-              // Remove previous selection
               document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
               
-              // Select current plant
               this.classList.add('selected');
               selectedFlower = {
                 id: this.dataset.flowerId,
@@ -768,11 +737,9 @@
 
               console.log('Selected flower:', selectedFlower);
 
-              // Highlight garden canvas
               gardenCanvas.classList.add('can-plant');
             });
 
-            // Add to container
             unlockedContainer.appendChild(flowerItem);
 
             console.log('Recreated flower in selector:', flowerName);
@@ -782,10 +749,8 @@
           existingFlower.style.display = 'block';
         }
 
-        // Remove from DOM
         flowerElement.remove();
 
-        // Clear form inputs
         const slotInput = document.getElementById('slot-' + slotIndex);
         const posXInput = document.getElementById('pos-x-' + slotIndex);
         const posYInput = document.getElementById('pos-y-' + slotIndex);
@@ -794,7 +759,6 @@
         if (posXInput) posXInput.value = '';
         if (posYInput) posYInput.value = '';
 
-        // Remove from array
         plantedFlowers = plantedFlowers.filter(f => f.slotIndex != slotIndex);
         
         updatePlantedCount();
@@ -802,44 +766,38 @@
       }
 
       function getNextAvailableSlot() {
-        console.log('Looking for available slot, nextSlotIndex:', nextSlotIndex); // Debug
-        
-        // Find first empty slot starting from nextSlotIndex
+        console.log('Looking for available slot, nextSlotIndex:', nextSlotIndex);
         for (let i = nextSlotIndex; i < 18; i++) {
           const input = document.getElementById('slot-' + i);
           if (input && input.value === '') {
-            console.log('Found available slot:', i); // Debug
+            console.log('Found available slot:', i);
             return i;
           }
         }
         
-        // If no slot found from nextSlotIndex to 17, search from 0
         for (let i = 0; i < nextSlotIndex; i++) {
           const input = document.getElementById('slot-' + i);
           if (input && input.value === '') {
-            console.log('Found available slot (wrap around):', i); // Debug
+            console.log('Found available slot (wrap around):', i);
             return i;
           }
         }
         
-        console.log('No available slots found!'); // Debug
-        return 0; // Fallback to slot 0
+        console.log('No available slots found!');
+        return 0;
       }
 
       function updatePlantedCount() {
         plantedCountEl.textContent = plantedFlowers.length;
       }
 
-      // Clear garden functionality
       document.getElementById('clearGarden')?.addEventListener('click', function() {
         if (confirm('Are you sure you want to clear your entire garden?')) {
-          // Remove all planted flowers (this will recreate them in selector)
           const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
           plantedFlowerElements.forEach(flower => {
             removeFlower(flower);
           });
 
-          // Clear selection
           if (selectedFlower) {
             selectedFlower.element.classList.remove('selected');
             selectedFlower = null;
@@ -848,7 +806,6 @@
         }
       });
 
-      // Keyboard shortcuts
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           if (selectedFlower) {
@@ -858,11 +815,7 @@
           }
         }
       });
-
-      // Initialize with existing flowers
-      loadExistingFlowers();
-      
-      // Debug: Check if flowers are detected
+      loadExistingFlowers();      
       console.log('Found flower elements:', document.querySelectorAll('.flower-selectable').length);
       console.log('Garden canvas element:', gardenCanvas);
     });

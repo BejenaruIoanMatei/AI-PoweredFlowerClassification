@@ -1,3 +1,312 @@
-{%extends "blog/base.html"%} {%block content%}
-<h1>About Page !</h1>
-{%endblock content%}
+{% extends "blog/base.html" %}
+{% block content %}
+
+<style>
+/* About Page Styles - Full Width Layout */
+.col-md-4 {
+    display: none !important;
+}
+
+.col-md-8 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #4CAF50 0%, #fffec8 100%);
+  border-radius: 25px;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 3rem;
+  box-shadow: 0 20px 40px rgba(76, 175, 80, 0.15);
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hero-pattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="5" cy="5" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="25" cy="10" r="1.5" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23hero-pattern)"/></svg>');
+  animation: float 25s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* How It Works Section */
+.how-it-works {
+  margin: 4rem 0;
+}
+
+.how-it-works-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #2e7d32;
+  margin-bottom: 3rem;
+  font-weight: 400;
+}
+
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.step-card {
+  text-align: center;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
+}
+
+.step-title {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.step-description {
+  color: #666;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, #2e7d32 0%, #4CAF50 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: white;
+  margin: 3rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="cta-pattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="12.5" cy="12.5" r="1.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23cta-pattern)"/></svg>');
+  animation: float 30s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+
+.cta-title {
+  font-size: 2.2rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-description {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-primary-custom {
+  background: white;
+  color: #2e7d32;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+}
+
+.btn-primary-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255,255,255,0.3);
+  color: #1b5e20;
+  text-decoration: none;
+}
+
+.btn-secondary-custom {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  border-radius: 25px;
+  padding: 10px 30px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary-custom:hover {
+  background: white;
+  color: #2e7d32;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .how-it-works-title {
+    font-size: 2rem;
+  }
+  
+  .steps-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .cta-section {
+    padding: 2rem 1.5rem;
+  }
+  
+  .cta-title {
+    font-size: 1.8rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-primary-custom,
+  .btn-secondary-custom {
+    width: 200px;
+    text-align: center;
+  }
+}
+</style>
+
+<div class="hero-section">
+  <h1 class="hero-title">About Plant Garden</h1>
+  <p class="hero-subtitle">
+    Discover the beauty of nature through AI-powered plant classification and join our growing community of plant enthusiasts
+  </p>
+</div>
+
+<section class="how-it-works">
+    <h2 class="how-it-works-title">How It Works</h2>
+    
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3 class="step-title">Upload & Classify</h3>
+        <p class="step-description">
+          Take a photo of any flower and upload it to our AI-powered classifier. Get instant identification with confidence levels.
+        </p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3 class="step-title">Unlock & Learn</h3>
+        <p class="step-description">
+          Successfully classified flowers are unlocked in your collection. Access detailed care guides and growing tips.
+        </p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3 class="step-title">Plant & Design</h3>
+        <p class="step-description">
+          Create your virtual garden by planting unlocked flowers. Design beautiful arrangements and watch your garden grow.
+        </p>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h3 class="step-title">Share & Connect</h3>
+        <p class="step-description">
+          Share your discoveries and gardening tips with the community. Learn from other plant enthusiasts worldwide.
+        </p>
+      </div>
+    </div>
+</section>
+  
+<section class="cta-section">
+    <h2 class="cta-title">Ready to Start Your Plant Journey?</h2>
+    <p class="cta-description">
+      Join thousands of plant enthusiasts who are already discovering, learning, and growing with Plant Garden.
+    </p>
+    <div class="cta-buttons">
+      <a href="{% url 'blog-classifier' %}" class="btn-primary-custom">
+        Classify Your First Plant
+      </a>
+      <a href="{% url 'virtual-garden' %}" class="btn-secondary-custom">
+        Explore Virtual Garden
+      </a>
+    </div>
+</section>
+
+{% endblock content %}
