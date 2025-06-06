@@ -204,23 +204,6 @@
         box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
       }
 
-      .btn-add-garden {
-        background: white;
-        border: 2px solid #4CAF50;
-        border-radius: 20px;
-        padding: 0.6rem 1.2rem;
-        color: #4CAF50;
-        font-size: 0.85rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .btn-add-garden:hover {
-        background: #4CAF50;
-        color: white;
-      }
-
       .unlock-badge {
         position: absolute;
         top: 1rem;
@@ -560,7 +543,6 @@
                               onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
                         Care Guide
                       </button>
-                      <button class="btn-add-garden">Add to Garden</button>
                     </div>
                   {% else %}
                     <div class="flower-actions">
@@ -605,7 +587,6 @@
                               onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
                         Care Guide
                       </button>
-                      <button class="btn-add-garden">Remove</button>
                     </div>
                   </div>
                 {% endif %}
@@ -868,32 +849,8 @@
         $('#careModal').modal('show');
       }
 
-      // Add to Garden functionality
+      // Initialize page
       document.addEventListener('DOMContentLoaded', function() {
-        // Handle Add to Garden buttons
-        document.querySelectorAll('.btn-add-garden').forEach(button => {
-          button.addEventListener('click', function() {
-            if (this.textContent === 'Add to Garden') {
-              this.textContent = 'Added!';
-              this.style.background = '#4CAF50';
-              this.style.color = 'white';
-              this.style.border = '2px solid #4CAF50';
-              
-              // Reset after 2 seconds
-              setTimeout(() => {
-                this.textContent = 'Remove';
-                this.style.background = '#ff5722';
-                this.style.borderColor = '#ff5722';
-              }, 2000);
-            } else if (this.textContent === 'Remove') {
-              this.textContent = 'Add to Garden';
-              this.style.background = 'white';
-              this.style.color = '#4CAF50';
-              this.style.border = '2px solid #4CAF50';
-            }
-          });
-        });
-
         // Animate cards on scroll
         const observerOptions = {
           threshold: 0.1,

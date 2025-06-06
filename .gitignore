@@ -7,6 +7,7 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
+licenta_project/virtual_garden/static/virtual_garden/images
 
 # Environments
 .env

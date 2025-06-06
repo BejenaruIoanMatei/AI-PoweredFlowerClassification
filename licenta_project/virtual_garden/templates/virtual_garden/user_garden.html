@@ -9,125 +9,373 @@
   <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
 
   <style>
-    .garden-container {
-      margin-top: 30px;
+    /* MODERN CLEAN DESIGN */
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background-attachment: fixed;
     }
-    .section-title {
+
+    .garden-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      margin: 2rem 0;
       text-align: center;
-      margin: 20px 0;
-      font-weight: bold;
-    }
-    .flower-item {
-      margin: 15px;
-      text-align: center;
-    }
-    .flower {
-      max-width: 100%;
-      height: auto;
-      transition: transform 0.3s;
-    }
-    .flower:hover {
-      transform: scale(1.05);
-    }
-    .slot-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 100px);
-      grid-gap: 20px;
-      justify-content: center;
-      margin-top: 30px;
-    }
-    .pot-container {
+      color: white;
       position: relative;
-      width: 100px;
-      height: 120px;
-      cursor: pointer;
-      transition: transform 0.2s;
+      overflow: hidden;
     }
 
-    .pot-container.occupied {
-        cursor: not-allowed;
-      }
-
-    .pot-container.occupied::after {
-        content: "🛑";
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        font-size: 20px;
-        opacity: 0.7;
-        pointer-events: none;
-        z-index: 5;
-      }
-
-    .pot-container:hover {
-      transform: scale(1.05);
-    }
-    .pot-container img.flower {
+    .garden-hero::before {
+      content: '';
       position: absolute;
-      top: 20px;
-      left: 10px;
-      width: 80px;
-      height: 80px;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="flower-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23flower-pattern)"/></svg>');
+      animation: float 20s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .garden-title {
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      position: relative;
       z-index: 1;
     }
-    .pot-container img.pot {
-      position: absolute;
-      top: 40px;
-      left: 0;
-      width: 100px;
-      height: 80px;
-      z-index: 2;
+
+    .garden-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
     }
-    .flower-selectable {
-      border: 3px solid transparent;
-      border-radius: 10px;
-      padding: 5px;
+
+    /* PLANT SECTIONS */
+    .plant-section {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 1rem 0;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(76, 175, 80, 0.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .section-title {
+      color: #333;
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .flower-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      justify-items: center;
+    }
+
+    .flower-item {
+      background: white;
+      border-radius: 15px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
       cursor: pointer;
-      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    .flower-selectable:hover {
-      background-color: rgba(0, 128, 0, 0.1);
+
+    .flower-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+      border-color: rgba(76, 175, 80, 0.3);
     }
-    .flower-selectable.selected {
-      border-color: #28a745;
-      background-color: rgba(40, 167, 69, 0.2);
+
+    .flower-item.selected {
+      border-color: #4CAF50;
+      background: rgba(76, 175, 80, 0.05);
+      transform: translateY(-3px);
     }
-    .flower-info {
-      font-size: 12px;
-      margin-top: 5px;
-      text-align: center;
+
+    .flower-image {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #f0f0f0;
+      margin-bottom: 0.8rem;
+      transition: all 0.3s ease;
     }
-    .instructions {
-      text-align: center;
-      margin: 20px 0;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-radius: 5px;
+
+    .flower-item:hover .flower-image {
+      border-color: #4CAF50;
     }
-    .pot-highlight {
+
+    .flower-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+      margin: 0;
+    }
+
+    .flower-locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .flower-locked:hover {
+      transform: none;
+      border-color: transparent;
+    }
+
+    .flower-locked .flower-image {
+      filter: grayscale(100%);
+    }
+
+    /* INTERACTIVE GARDEN */
+    .garden-area {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 1rem 0;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(76, 175, 80, 0.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .garden-canvas {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      background: url('{% static "virtual_garden/images/garden-background.png" %}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 15px;
+      border: 2px solid rgba(76, 175, 80, 0.2);
+      overflow: hidden;
+      cursor: crosshair;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .garden-canvas::before {
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      border-radius: 10px;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(34,139,34,0.1) 2px, transparent 2px),
+        radial-gradient(circle at 70% 80%, rgba(34,139,34,0.08) 1px, transparent 1px),
+        radial-gradient(circle at 40% 70%, rgba(34,139,34,0.06) 3px, transparent 3px);
+      background-size: 40px 40px, 60px 60px, 80px 80px;
       pointer-events: none;
-      z-index: 3;
     }
-    .pot-highlight.can-plant {
-      background-color: rgba(40, 167, 69, 0.2);
-      border: 2px dashed #28a745;
+
+    .garden-canvas.can-plant {
+      border-color: #4CAF50;
+      box-shadow: inset 0 4px 12px rgba(76, 175, 80, 0.1), 0 0 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .planted-flower-free {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid transparent; /* Invizibil până la hover */
+      cursor: grab;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Shadow discret */
+      z-index: 10;
+      animation: plant-appear 0.5s ease-out;
+    }
+    
+    .planted-flower-free:hover {
+      transform: scale(1.1);
+      border-color: #FFD700; /* Aur la hover */
+      box-shadow: 0 8px 20px rgba(255,215,0,0.4);
+      z-index: 20;
+    }
+    
+    .planted-flower-free:active,
+    .planted-flower-free.dragging {
+      cursor: grabbing;
+      transform: scale(1.2) rotate(5deg);
+      z-index: 30;
+      border-color: #ff6b6b;
+      box-shadow: 0 12px 30px rgba(255,107,107,0.4);
+    }
+
+    @keyframes plant-appear {
+      0% { 
+        transform: scale(0) rotate(180deg); 
+        opacity: 0; 
+      }
+      70% { 
+        transform: scale(1.2) rotate(-10deg); 
+        opacity: 0.8; 
+      }
+      100% { 
+        transform: scale(1) rotate(0deg); 
+        opacity: 1; 
+      }
+    }
+
+    .garden-guide {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #2e7d32;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      z-index: 5;
+    }
+
+    .garden-stats {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #2e7d32;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      z-index: 5;
+    }
+
+    .remove-zone {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,107,107,0.9);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 25px;
+      font-weight: 500;
+      border: 2px dashed rgba(255,255,255,0.5);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    .remove-zone.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .remove-zone:hover {
+      background: rgba(220,53,69,0.9);
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    /* CONTROLS */
+    .garden-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .btn-garden {
+      background: linear-gradient(135deg, #4CAF50, #66BB6A);
+      border: none;
+      border-radius: 25px;
+      padding: 12px 25px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-garden:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+      background: linear-gradient(135deg, #45a049, #5db75d);
+    }
+
+    .btn-garden.btn-secondary {
+      background: linear-gradient(135deg, #6c757d, #868e96);
+      box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-garden.btn-secondary:hover {
+      background: linear-gradient(135deg, #5a6268, #6c757d);
+      box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+    }
+
+    /* INSTRUCTIONS */
+    .instructions {
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid rgba(76, 175, 80, 0.2);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .instructions p {
+      margin: 0;
+      color: #2e7d32;
+      font-weight: 500;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      .garden-hero {
+        padding: 2rem 1rem;
+        margin: 1rem 0;
+      }
+      
+      .garden-title {
+        font-size: 2rem;
+      }
+      
+      .slot-grid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 15px;
+      }
+      
+      .flower-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .plant-section,
+      .garden-area {
+        padding: 1.5rem;
+        margin: 0.5rem 0;
+      }
     }
   </style>
 
-  <title>Grădina Virtuală</title>
+  <title>{{ garden_owner.username }}'s Garden - Plant Garden</title>
 </head>
 
 <body>
   <header class="site-header">
     <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
       <div class="container">
-        <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">Django Blog</a>
+        <a class="navbar-brand navbar-brand-enhanced mr-4" href="{% url 'blog-home' %}">Plant Garden</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -135,11 +383,13 @@
           <div class="navbar-nav mr-auto">
             <a class="nav-item nav-link" href="{% url 'blog-classifier' %}">Home</a>
             <a class="nav-item nav-link" href="{% url 'blog-home' %}">Blog</a>
+            <a class="nav-item nav-link" href="{% url 'activity-feed' %}">Activity</a>
             <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
           </div>
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="{% url 'virtual-garden' %}">Flowers</a>
             {% if user.is_authenticated %}
+              <a class="nav-item nav-link" href="{% url 'user-garden' user.username %}">My Garden</a>
               <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
               <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
               <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
@@ -153,229 +403,469 @@
     </nav>
   </header>
 
-  <main role="main" class="container">
-    <div class="row garden-container">
-      <div class="col-md-12 text-center">
-        <h2 class="my-4">{{ garden_owner.username }}'s Virtual Garden</h2>
-        
-        <div class="instructions">
-          <p>
-            <i class="fas fa-info-circle"></i>
-            Select an unlocked flower and plant it!
-          </p>
-        </div>
-      </div>
+  <main role="main" class="container" style="margin-top: 80px;">
+    <!-- GARDEN HERO -->
+    <div class="garden-hero">
+      <h1 class="garden-title">{{ garden_owner.username }}'s Garden</h1>
+      <p class="garden-subtitle">Design your perfect botanical space</p>
+    </div>
 
-      <div class="row w-100">
-       <!-- Stânga: Flori deblocate -->
-        <div class="col-md-3">
-            <h4 class="section-title">Unlocked Flowers</h4>
-            <div id="unlocked-flowers" class="d-flex flex-column align-items-center">
+    <!-- INSTRUCTIONS -->
+    <div class="instructions">
+      <p>Select a plant from your collection and click on an empty pot to plant it. Double-click planted flowers to remove them.</p>
+    </div>
+
+    <div class="row">
+      <!-- LEFT - Available Plants -->
+      <div class="col-md-4">
+        <div class="plant-section">
+          <h3 class="section-title">Available Plants</h3>
+          <div class="flower-grid" id="unlocked-flowers">
             {% for gf in garden_flowers %}
-                {% if gf.unlocked %}
-                  <div class="flower-item">
-                    <img 
-                      src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
-                      class="flower-selectable" 
-                      data-flower-id="{{ gf.flower.id }}" 
-                      data-icon-path="{% get_media_prefix %}{{ gf.flower.icon_path }}"
-                      title="{{ gf.flower.name }}"
-                      width="80"
-                    />
-                    <div class="flower-info">{{ gf.flower.name }}</div>
-                  </div>
-                {% endif %}
-            {% endfor %}
-              
-            </div>
-        </div>
-  
-      
-        <!-- Mijloc: Ghivece -->
-        <div class="col-md-6">
-          <h4 class="section-title">Pots</h4>
-          <form method="POST" id="garden-form">
-            {% csrf_token %}
-            <div class="slot-grid">
-                {% for slot in slots %}
-                <div 
-                  class="pot-container {% if slot.flower %}occupied{% endif %}" 
-                  data-slot-index="{{ slot.slot_index }}"
-                >
-                  {% if slot.flower %}
-                    <img src="{% get_media_prefix %}{{ slot.flower.icon_path }}" class="flower" alt="{{ slot.flower.name }}">
-                  {% endif %}
-                  <img src="{% get_media_prefix %}garden/pot.png" class="pot" alt="pot">
-                  <div class="pot-highlight"></div>
-                  <input type="hidden" name="flower_{{ slot.slot_index }}" id="slot-{{ slot.slot_index }}" value="{% if slot.flower %}{{ slot.flower.id }}{% endif %}">
+              {% if gf.available_for_planting %}
+                <div class="flower-item flower-selectable" 
+                     data-flower-id="{{ gf.flower.id }}" 
+                     data-icon-path="{% get_media_prefix %}{{ gf.flower.icon_path }}"
+                     data-flower-name="{{ gf.flower.name }}">
+                  <img src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
+                       class="flower-image" 
+                       alt="{{ gf.flower.name }}">
+                  <p class="flower-name">{{ gf.flower.name }}</p>
                 </div>
-              {% endfor %}
-              
-            </div>
-            {% if user == garden_owner %}
-              <button type="submit" class="btn btn-success mt-4">Save the Garden</button>
-            {% endif %}
-          </form>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
-      
-        <!-- Dreapta: Flori blocate -->
-        <div class="col-md-3">
-          <h4 class="section-title">To be unlocked</h4>
-          <div class="d-flex flex-column align-items-center">
+
+        <div class="plant-section">
+          <h3 class="section-title">Locked Plants</h3>
+          <div class="flower-grid">
             {% for gf in garden_flowers %}
               {% if not gf.unlocked %}
-                <div class="flower-item">
-                  <img 
-                    src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
-                    class="flower" 
-                    title="{{ gf.flower.name }}" 
-                    style="filter: grayscale(100%) opacity(0.5);"
-                    width="80"
-                  />
-                  <div class="flower-info">{{ gf.flower.name }}</div>
+                <div class="flower-item flower-locked">
+                  <img src="{% get_media_prefix %}{{ gf.flower.icon_path }}" 
+                       class="flower-image" 
+                       alt="{{ gf.flower.name }}">
+                  <p class="flower-name">{{ gf.flower.name }}</p>
                 </div>
               {% endif %}
             {% endfor %}
           </div>
         </div>
       </div>
+
+      <!-- CENTER - Interactive Garden -->
+      <div class="col-md-8">
+        <div class="garden-area">
+          <h3 class="section-title">Free Garden Canvas</h3>
+          
+          <form method="POST" id="garden-form">
+            {% csrf_token %}
+            <div class="garden-canvas" id="gardenCanvas">
+              <div class="garden-guide">
+                Click to plant selected flowers anywhere!
+              </div>
+              <div class="garden-stats">
+                <span id="plantedCount">0</span> / 18 planted
+              </div>
+              <div class="remove-zone" id="removeZone">
+                Drop here to remove
+              </div>
+              
+              <!-- Hidden inputs for flower positions -->
+              {% for slot in slots %}
+                <input type="hidden" name="flower_{{ slot.slot_index }}" id="slot-{{ slot.slot_index }}" value="{% if slot.flower %}{{ slot.flower.id }}{% endif %}">
+                <input type="hidden" name="pos_x_{{ slot.slot_index }}" id="pos-x-{{ slot.slot_index }}" value="{{ slot.pos_x|default:'' }}">
+                <input type="hidden" name="pos_y_{{ slot.slot_index }}" id="pos-y-{{ slot.slot_index }}" value="{{ slot.pos_y|default:'' }}">
+              {% endfor %}
+            </div>
+            
+            {% if user == garden_owner %}
+              <div class="garden-controls">
+                <button type="submit" class="btn-garden">
+                  Save Garden
+                </button>
+                <button type="button" class="btn-garden btn-secondary" id="clearGarden">
+                  Clear All
+                </button>
+              </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
     </div>
   </main>
 
   <!-- Scripts -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      let selectedFlowerId = null;
-      let selectedFlowerIcon = null;
-      let selectedFlowerElement = null;
-  
-      // Selectare floare
-      function bindFlowerClick(flower) {
-        flower.addEventListener('click', () => {
-          document.querySelectorAll('.flower-selectable').forEach(f => f.classList.remove('selected'));
-          flower.classList.add('selected');
-          selectedFlowerId = flower.dataset.flowerId;
-          selectedFlowerIcon = flower.dataset.iconPath;
-          selectedFlowerElement = flower;
-  
-          document.querySelectorAll('.pot-container .pot-highlight').forEach(h => h.classList.add('can-plant'));
-        });
+      let selectedFlower = null;
+      let plantedFlowers = [];
+      let draggedFlower = null;
+      let nextSlotIndex = 0;
+
+      const gardenCanvas = document.getElementById('gardenCanvas');
+      const removeZone = document.getElementById('removeZone');
+      const plantedCountEl = document.getElementById('plantedCount');
+
+      // Load existing flowers from form data
+      function loadExistingFlowers() {
+        {% for slot in slots %}
+          {% if slot.flower %}
+            createPlantedFlower({
+              id: '{{ slot.flower.id }}',
+              icon: '{% get_media_prefix %}{{ slot.flower.icon_path }}',
+              name: '{{ slot.flower.name }}'
+            }, 
+            {{ slot.pos_x|default:"Math.random() * (gardenCanvas.offsetWidth - 80)" }}, 
+            {{ slot.pos_y|default:"Math.random() * (gardenCanvas.offsetHeight - 80)" }}, 
+            {{ slot.slot_index }});
+          {% endif %}
+          
+          if ({{ slot.slot_index }} >= nextSlotIndex) {
+            nextSlotIndex = {{ slot.slot_index }} + 1;
+          }
+        {% endfor %}
+        
+        updatePlantedCount();
       }
-  
-      document.querySelectorAll('.flower-selectable').forEach(bindFlowerClick);
-  
-      // Plantare floare
-      document.querySelectorAll('.pot-container').forEach(pot => {
-        let clickTimer = null;
-  
-        pot.addEventListener('click', (e) => {
-          if (clickTimer) return;
-          clickTimer = setTimeout(() => {
-            clickTimer = null;
-  
-            if (!selectedFlowerId) {
-              alert("Selectează mai întâi o floare!");
-              return;
-            }
-  
-            // Blochează plantarea dacă e deja ocupat
-            if (pot.classList.contains('occupied')) {
-              alert("Ghiveciul este deja ocupat! Dă dublu click pentru a scoate floarea.");
-              return;
-            }
-  
-            const slotIndex = pot.dataset.slotIndex;
-            const input = document.getElementById('slot-' + slotIndex);
-  
-            const existingFlower = pot.querySelector('img.flower');
-            if (existingFlower) existingFlower.remove();
-  
-            const img = document.createElement('img');
-            img.src = selectedFlowerIcon;
-            img.className = 'flower';
-            img.alt = selectedFlowerElement.title;
-            pot.insertBefore(img, pot.querySelector('.pot'));
-  
-            input.value = selectedFlowerId;
-  
-            selectedFlowerElement.closest('.flower-item').style.display = 'none';
-  
-            selectedFlowerId = null;
-            selectedFlowerIcon = null;
-            selectedFlowerElement = null;
-  
-            document.querySelectorAll('.pot-container .pot-highlight').forEach(h => h.classList.remove('can-plant'));
-  
-            // Marchează ca ocupat
-            pot.classList.add('occupied');
-          }, 200);
-        });
-  
-        // Dublu click pentru a elibera ghiveciul
-        pot.addEventListener('dblclick', () => {
-          if (clickTimer) {
-            clearTimeout(clickTimer);
-            clickTimer = null;
-          }
-  
-          const flowerImg = pot.querySelector('img.flower');
-          if (flowerImg) {
-            const slotIndex = pot.dataset.slotIndex;
-            const input = document.getElementById('slot-' + slotIndex);
-            const flowerId = input.value;
-  
-            if (flowerId) {
-              const container = document.getElementById('unlocked-flowers');
-              const wrapper = document.createElement('div');
-              wrapper.className = 'flower-item';
-  
-              const newFlower = document.createElement('img');
-              newFlower.src = flowerImg.src;
-              newFlower.className = 'flower-selectable';
-              newFlower.dataset.flowerId = flowerId;
-              newFlower.dataset.iconPath = flowerImg.src;
-              newFlower.title = flowerImg.alt;
-              newFlower.width = 80;
-  
-              const info = document.createElement('div');
-              info.className = 'flower-info';
-              info.textContent = flowerImg.alt;
-  
-              wrapper.appendChild(newFlower);
-              wrapper.appendChild(info);
-              wrapper.style.display = 'block';
-              container.appendChild(wrapper);
-  
-              bindFlowerClick(newFlower);
-            }
-  
-            flowerImg.remove();
-            input.value = '';
-  
-            // Marchează ca neocupat
-            pot.classList.remove('occupied');
-          }
+
+      // Plant selection
+      document.querySelectorAll('.flower-selectable').forEach(plant => {
+        plant.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Flower clicked:', this.dataset.flowerName); // Debug
+          
+          // Remove previous selection
+          document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
+          
+          // Select current plant
+          this.classList.add('selected');
+          selectedFlower = {
+            id: this.dataset.flowerId,
+            icon: this.dataset.iconPath,
+            name: this.dataset.flowerName,
+            element: this
+          };
+
+          console.log('Selected flower:', selectedFlower); // Debug
+
+          // Highlight garden canvas
+          gardenCanvas.classList.add('can-plant');
         });
       });
-  
-      // Deselectare floare cu Escape
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          if (selectedFlowerElement) {
-            selectedFlowerElement.classList.remove('selected');
-            selectedFlowerId = null;
-            selectedFlowerIcon = null;
-            selectedFlowerElement = null;
-            document.querySelectorAll('.pot-container .pot-highlight').forEach(h => h.classList.remove('can-plant'));
+
+      // Garden canvas click - plant flower
+      gardenCanvas.addEventListener('click', function(e) {
+        console.log('Canvas clicked, selectedFlower:', selectedFlower); // Debug
+        
+        if (!selectedFlower) {
+          console.log('No flower selected'); // Debug
+          return;
+        }
+        
+        // Don't plant if clicking on existing flower or UI elements
+        if (e.target.classList.contains('planted-flower-free') || 
+            e.target.classList.contains('garden-guide') ||
+            e.target.classList.contains('garden-stats') ||
+            e.target.classList.contains('remove-zone')) {
+          console.log('Clicked on UI element, ignoring'); // Debug
+          return;
+        }
+
+        console.log('Planting flower...'); // Debug
+
+        const rect = gardenCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - 40; // Center the flower
+        const y = e.clientY - rect.top - 40;
+
+        // Ensure flower stays within bounds
+        const maxX = gardenCanvas.offsetWidth - 80;
+        const maxY = gardenCanvas.offsetHeight - 80;
+        const finalX = Math.max(0, Math.min(x, maxX));
+        const finalY = Math.max(0, Math.min(y, maxY));
+
+        console.log('Planting at position:', finalX, finalY); // Debug
+
+        // Create planted flower
+        const slotIndex = getNextAvailableSlot();
+        createPlantedFlower(selectedFlower, finalX, finalY, slotIndex);
+
+        // Hide from selector (remove the element completely to avoid duplicates)
+        selectedFlower.element.remove();
+
+        // Clear selection
+        selectedFlower = null;
+        document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
+        gardenCanvas.classList.remove('can-plant');
+
+        updatePlantedCount();
+      });
+
+      function createPlantedFlower(flowerData, x, y, slotIndex) {
+        console.log('Creating planted flower:', flowerData.name, 'at slot:', slotIndex); // Debug
+        
+        const flowerEl = document.createElement('img');
+        flowerEl.src = flowerData.icon;
+        flowerEl.className = 'planted-flower-free';
+        flowerEl.alt = flowerData.name;
+        flowerEl.title = flowerData.name;
+        flowerEl.style.left = x + 'px';
+        flowerEl.style.top = y + 'px';
+        flowerEl.dataset.flowerId = flowerData.id;
+        flowerEl.dataset.slotIndex = slotIndex;
+        flowerEl.dataset.flowerName = flowerData.name; // Add flower name for easier removal
+
+        // Add drag functionality
+        makeDraggable(flowerEl);
+
+        gardenCanvas.appendChild(flowerEl);
+
+        // Update form inputs
+        const slotInput = document.getElementById('slot-' + slotIndex);
+        const posXInput = document.getElementById('pos-x-' + slotIndex);
+        const posYInput = document.getElementById('pos-y-' + slotIndex);
+        
+        if (slotInput) slotInput.value = flowerData.id;
+        if (posXInput) posXInput.value = x;
+        if (posYInput) posYInput.value = y;
+
+        plantedFlowers.push({
+          element: flowerEl,
+          flowerId: flowerData.id,
+          slotIndex: slotIndex
+        });
+        
+        console.log('Flower created successfully'); // Debug
+      }
+
+      function makeDraggable(element) {
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
+
+        element.addEventListener('mousedown', function(e) {
+          isDragging = true;
+          draggedFlower = element;
+          element.classList.add('dragging');
+          
+          startX = e.clientX;
+          startY = e.clientY;
+          startLeft = parseInt(element.style.left) || 0;
+          startTop = parseInt(element.style.top) || 0;
+
+          removeZone.classList.add('active');
+          
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', function(e) {
+          if (!isDragging || draggedFlower !== element) return;
+
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          
+          const newLeft = startLeft + dx;
+          const newTop = startTop + dy;
+
+          // Keep within bounds
+          const maxX = gardenCanvas.offsetWidth - 80;
+          const maxY = gardenCanvas.offsetHeight - 80;
+          
+          element.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
+          element.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+        });
+
+        document.addEventListener('mouseup', function(e) {
+          if (!isDragging || draggedFlower !== element) return;
+
+          isDragging = false;
+          element.classList.remove('dragging');
+          removeZone.classList.remove('active');
+
+          // Check if dropped on remove zone
+          const removeRect = removeZone.getBoundingClientRect();
+          const elementRect = element.getBoundingClientRect();
+          
+          if (elementRect.left < removeRect.right && 
+              elementRect.right > removeRect.left && 
+              elementRect.top < removeRect.bottom && 
+              elementRect.bottom > removeRect.top) {
+            
+            removeFlower(element);
+          } else {
+            // Update position in form
+            const slotIndex = element.dataset.slotIndex;
+            document.getElementById('pos-x-' + slotIndex).value = parseInt(element.style.left);
+            document.getElementById('pos-y-' + slotIndex).value = parseInt(element.style.top);
+          }
+
+          draggedFlower = null;
+        });
+
+        // Double click to remove
+        element.addEventListener('dblclick', function() {
+          removeFlower(element);
+        });
+      }
+
+      function removeFlower(flowerElement) {
+        console.log('Removing flower'); // Debug
+        
+        const slotIndex = flowerElement.dataset.slotIndex;
+        const flowerId = flowerElement.dataset.flowerId;
+        const flowerName = flowerElement.dataset.flowerName || flowerElement.alt;
+        const flowerIcon = flowerElement.src;
+
+        // Check if flower already exists in selector to avoid duplicates
+        const existingFlower = document.querySelector(`[data-flower-id="${flowerId}"].flower-selectable`);
+        if (!existingFlower) {
+          // Recreate flower in available section only if it doesn't exist
+          const unlockedContainer = document.getElementById('unlocked-flowers');
+          if (unlockedContainer) {
+            // Create new flower item
+            const flowerItem = document.createElement('div');
+            flowerItem.className = 'flower-item flower-selectable';
+            flowerItem.dataset.flowerId = flowerId;
+            flowerItem.dataset.iconPath = flowerIcon;
+            flowerItem.dataset.flowerName = flowerName;
+            flowerItem.style.display = 'block';
+
+            // Create image
+            const img = document.createElement('img');
+            img.src = flowerIcon;
+            img.className = 'flower-image';
+            img.alt = flowerName;
+
+            // Create name
+            const nameP = document.createElement('p');
+            nameP.className = 'flower-name';
+            nameP.textContent = flowerName;
+
+            // Assemble
+            flowerItem.appendChild(img);
+            flowerItem.appendChild(nameP);
+
+            // Add click event
+            flowerItem.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('Flower clicked:', this.dataset.flowerName);
+              
+              // Remove previous selection
+              document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
+              
+              // Select current plant
+              this.classList.add('selected');
+              selectedFlower = {
+                id: this.dataset.flowerId,
+                icon: this.dataset.iconPath,
+                name: this.dataset.flowerName,
+                element: this
+              };
+
+              console.log('Selected flower:', selectedFlower);
+
+              // Highlight garden canvas
+              gardenCanvas.classList.add('can-plant');
+            });
+
+            // Add to container
+            unlockedContainer.appendChild(flowerItem);
+
+            console.log('Recreated flower in selector:', flowerName);
+          }
+        } else {
+          console.log('Flower already exists in selector, just showing it');
+          existingFlower.style.display = 'block';
+        }
+
+        // Remove from DOM
+        flowerElement.remove();
+
+        // Clear form inputs
+        const slotInput = document.getElementById('slot-' + slotIndex);
+        const posXInput = document.getElementById('pos-x-' + slotIndex);
+        const posYInput = document.getElementById('pos-y-' + slotIndex);
+        
+        if (slotInput) slotInput.value = '';
+        if (posXInput) posXInput.value = '';
+        if (posYInput) posYInput.value = '';
+
+        // Remove from array
+        plantedFlowers = plantedFlowers.filter(f => f.slotIndex != slotIndex);
+        
+        updatePlantedCount();
+        console.log('Flower removed successfully');
+      }
+
+      function getNextAvailableSlot() {
+        console.log('Looking for available slot, nextSlotIndex:', nextSlotIndex); // Debug
+        
+        // Find first empty slot starting from nextSlotIndex
+        for (let i = nextSlotIndex; i < 18; i++) {
+          const input = document.getElementById('slot-' + i);
+          if (input && input.value === '') {
+            console.log('Found available slot:', i); // Debug
+            return i;
+          }
+        }
+        
+        // If no slot found from nextSlotIndex to 17, search from 0
+        for (let i = 0; i < nextSlotIndex; i++) {
+          const input = document.getElementById('slot-' + i);
+          if (input && input.value === '') {
+            console.log('Found available slot (wrap around):', i); // Debug
+            return i;
+          }
+        }
+        
+        console.log('No available slots found!'); // Debug
+        return 0; // Fallback to slot 0
+      }
+
+      function updatePlantedCount() {
+        plantedCountEl.textContent = plantedFlowers.length;
+      }
+
+      // Clear garden functionality
+      document.getElementById('clearGarden')?.addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear your entire garden?')) {
+          // Remove all planted flowers (this will recreate them in selector)
+          const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
+          plantedFlowerElements.forEach(flower => {
+            removeFlower(flower);
+          });
+
+          // Clear selection
+          if (selectedFlower) {
+            selectedFlower.element.classList.remove('selected');
+            selectedFlower = null;
+            gardenCanvas.classList.remove('can-plant');
           }
         }
       });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          if (selectedFlower) {
+            selectedFlower.element.classList.remove('selected');
+            selectedFlower = null;
+            gardenCanvas.classList.remove('can-plant');
+          }
+        }
+      });
+
+      // Initialize with existing flowers
+      loadExistingFlowers();
+      
+      // Debug: Check if flowers are detected
+      console.log('Found flower elements:', document.querySelectorAll('.flower-selectable').length);
+      console.log('Garden canvas element:', gardenCanvas);
     });
   </script>
-  
-  
 </body>
 </html>
