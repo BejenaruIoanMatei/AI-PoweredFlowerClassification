@@ -1,13 +1,11 @@
-# Plant Garden
+# Florli
 ### AI-Powered Plant Classification & Virtual Gardening
 
-Plant Garden is a Django web application that combines artificial intelligence with gamified gardening. Users upload flower photos for AI classification, unlock plants in their virtual garden, and share knowledge with the community.
+Florli is a Django web application that combines artificial intelligence with gamified gardening. Users upload flower photos for AI classification, unlock plants in their virtual garden, and share knowledge with the community.
 
 The system integrates machine learning models for plant identification and features an interactive virtual garden where users can plant and arrange their discovered flowers.
 
 > **Note:** This is a university thesis project showcasing AI integration in web applications. The ML models are trained for educational purposes and may require optimization for production use.
-
-Link to demo video: ()[]
 
 ### Features
 - **AI Plant Classification**: Upload flower photos and get instant identification with confidence scores
