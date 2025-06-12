@@ -36,7 +36,7 @@ def user_garden_view(request, username):
     garden, _ = VirtualGarden.objects.get_or_create(user=user)
 
     slots = []
-    for i in range(18):
+    for i in range(13):
         slot, _ = GardenSlot.objects.get_or_create(garden=garden, slot_index=i)
         slots.append(slot)
         
@@ -49,7 +49,7 @@ def user_garden_view(request, username):
         {
             'flower': gf.flower,
             'unlocked': gf.unlocked,
-            'available_for_planting': gf.unlocked and gf.flower.id not in planted_flower_ids  # Disponibil pentru plantare
+            'available_for_planting': gf.unlocked and gf.flower.id not in planted_flower_ids
         }
         for gf in garden_flowers_qs
     ]

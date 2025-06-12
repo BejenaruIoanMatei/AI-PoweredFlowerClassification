@@ -4,7 +4,15 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from PIL import Image, UnidentifiedImageError
 from virtual_garden.models import Flower
+import os
+from django.core.exceptions import ValidationError
 
+def validate_image_format(image):
+    valid_extensions = ['.jpg', '.jpeg', '.png']
+    ext = os.path.splitext(image.name)[1].lower()
+    
+    if ext not in valid_extensions:
+        raise ValidationError('Only .jpg, .jpeg, .png')
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -37,7 +45,10 @@ class Post(models.Model):
 
 class ImageClassification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='classified_images')
+    image = models.ImageField(
+        upload_to='classified_images',
+        validators=[validate_image_format]
+    )
     uploaded_at = models.DateTimeField(auto_now_add=True)
     predicted_label = models.CharField(max_length=100, blank=True)
     confidence = models.FloatField(null=True, blank=True)

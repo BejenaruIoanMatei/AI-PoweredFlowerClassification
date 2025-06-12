@@ -137,7 +137,6 @@
     {% for post in posts %}
       <article class="card mb-4 shadow-sm">
         <div class="row no-gutters">
-          <!-- Imagine postare dacă există -->
           {% if post.image_post %}
             <div class="col-md-4">
               <img src="{{ post.image_post.url }}" class="img-fluid rounded-left h-100 w-100 object-fit-cover" alt="Post image" />

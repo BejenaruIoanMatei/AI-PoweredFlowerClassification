@@ -1,3 +1,4 @@
+# blog views.py
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
@@ -62,7 +63,6 @@ class ClassifierView(LoginRequiredMixin, CreateView):
                 )
         except Flower.DoesNotExist:
             print(f"Floarea cu numele '{normalized}' nu a fost gasita in db.")
-        # =============================
 
         return response
     

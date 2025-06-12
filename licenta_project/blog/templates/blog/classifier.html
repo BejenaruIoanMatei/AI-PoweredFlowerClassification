@@ -46,6 +46,36 @@
     font-size: 1.1rem;
 }
 
+/* ERROR ALERT STYLES */
+.error-alert {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    position: relative;
+    z-index: 10;
+    animation: errorShake 0.5s ease-out;
+}
+
+.error-alert .close {
+    color: white;
+    opacity: 0.8;
+    text-shadow: none;
+}
+
+.error-alert .close:hover {
+    opacity: 1;
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
 /* MODERN UPLOAD AREA */
 .upload-area {
     background: rgba(255,255,255,0.95);
@@ -72,6 +102,18 @@
     box-shadow: 0 25px 50px rgba(76, 175, 80, 0.12);
 }
 
+.upload-area.error-state {
+    border-color: rgba(255, 107, 107, 0.3);
+    background: rgba(255,248,248,0.95);
+    box-shadow: 0 20px 40px rgba(255, 107, 107, 0.08);
+    animation: errorPulse 0.6s ease-out;
+}
+
+@keyframes errorPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
 .upload-content {
     position: relative;
     z-index: 2;
@@ -93,6 +135,11 @@
 .upload-area:hover .upload-icon-container {
     transform: scale(1.05);
     box-shadow: 0 12px 30px rgba(76, 175, 80, 0.2);
+}
+
+.upload-area.error-state .upload-icon-container {
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.15);
 }
 
 .upload-icon {
@@ -150,6 +197,11 @@
     background: #f0f8f0;
 }
 
+.file-input-custom.error {
+    border-color: #ff6b6b;
+    background: #fff8f8;
+}
+
 .file-input-text {
     color: #666;
     font-size: 0.95rem;
@@ -160,6 +212,11 @@
 
 .file-input-custom.has-file .file-input-text {
     color: #2e7d32;
+    font-weight: 400;
+}
+
+.file-input-custom.error .file-input-text {
+    color: #c62828;
     font-weight: 400;
 }
 
@@ -175,6 +232,10 @@
 
 .file-input-custom:hover .file-input-button {
     background: #45a049;
+}
+
+.file-input-custom.error .file-input-button {
+    background: #ff6b6b;
 }
 
 #id_image {
@@ -606,6 +667,31 @@
   <h1 class="classifier-title">Plant Classifier</h1>
   <p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
   
+  <!-- Error Messages Display -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert error-alert alert-dismissible fade show" role="alert">
+        <strong>Error:</strong> {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Form Errors Display -->
+  {% if form.image.errors %}
+    <div class="alert error-alert alert-dismissible fade show" role="alert">
+      <strong>File Error:</strong> 
+      {% for error in form.image.errors %}
+        {{ error }}
+      {% endfor %}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endif %}
+  
   <div class="upload-area text-center" id="uploadArea">
     <div class="upload-content">
       <div class="upload-icon-container">
@@ -624,12 +710,18 @@
             <div class="file-input-custom" id="fileInputCustom">
               <span class="file-input-text" id="fileInputText">Choose image file</span>
               <span class="file-input-button">Browse</span>
-              {{ form.image }}
+              <!-- Updated accept attribute to only allow JPG, JPEG, PNG -->
+              <input type="file" 
+                     name="image" 
+                     id="id_image"
+                     accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                     required>
             </div>
           </div>
           
           <div class="upload-formats">
-            Supported formats: JPG, PNG, JPEG (max 10MB)
+            <!-- Updated supported formats text -->
+            Supported formats: JPG, JPEG, PNG only (max 10MB)
           </div>
           
           <div class="image-preview" id="imagePreview" style="display: none;">
@@ -737,6 +829,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewImg = document.getElementById('previewImg');
     const analyzeBtn = document.getElementById('analyzeBtn');
 
+    // Valid file types - updated to match server validation
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const validExtensions = ['.jpg', '.jpeg', '.png'];
+
     if (!fileInput || !fileInputCustom || !uploadArea) {
         return;
     }
@@ -762,12 +858,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             const file = files[0];
-            if (file.type.startsWith('image/')) {
+            if (isValidFileType(file)) {
                 const dt = new DataTransfer();
                 dt.items.add(file);
                 fileInput.files = dt.files;
                 
                 handleFileSelect(file);
+            } else {
+                showFileError('Please select a valid image file (JPG, JPEG, or PNG).');
             }
         }
     });
@@ -797,26 +895,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function isValidFileType(file) {
+        // Check MIME type
+        if (!validTypes.includes(file.type)) {
+            return false;
+        }
+        
+        // Check file extension
+        const fileName = file.name.toLowerCase();
+        const hasValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+        
+        return hasValidExtension;
+    }
+
+    function showFileError(message) {
+        // Remove error state first
+        uploadArea.classList.remove('error-state');
+        fileInputCustom.classList.remove('error');
+        
+        // Add error state with animation
+        setTimeout(() => {
+            uploadArea.classList.add('error-state');
+            fileInputCustom.classList.add('error');
+            fileInputText.textContent = message;
+        }, 100);
+        
+        // Reset after 3 seconds
+        setTimeout(() => {
+            resetUploadArea();
+        }, 3000);
+    }
+
     function handleFileSelect(file) {
         if (!file) {
             resetUploadArea();
             return;
         }
 
-        if (!file.type.startsWith('image/')) {
-            alert('Please select a valid image file.');
-            resetUploadArea();
+        // Validate file type
+        if (!isValidFileType(file)) {
+            showFileError('Invalid format. Only JPG, JPEG, and PNG files are allowed.');
+            // Clear the file input
+            fileInput.value = '';
             return;
         }
 
+        // Validate file size (10MB limit)
         if (file.size > 10 * 1024 * 1024) {
-            alert('File size must be less than 10MB.');
-            resetUploadArea();
+            showFileError('File size must be less than 10MB.');
+            fileInput.value = '';
             return;
         }
 
+        // File is valid
         fileInputText.textContent = file.name;
+        fileInputCustom.classList.remove('error');
         fileInputCustom.classList.add('has-file');
+        uploadArea.classList.remove('error-state');
         analyzeBtn.disabled = false;
 
         if (imagePreview && previewImg) {
@@ -831,12 +966,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function resetUploadArea() {
         fileInputText.textContent = 'Choose image file';
-        fileInputCustom.classList.remove('has-file');
+        fileInputCustom.classList.remove('has-file', 'error');
+        uploadArea.classList.remove('error-state');
         if (imagePreview) {
             imagePreview.style.display = 'none';
         }
         analyzeBtn.disabled = true;
     }
+
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const file = fileInput.files[0];
+        if (!file) {
+            e.preventDefault();
+            showFileError('Please select a file before uploading.');
+            return;
+        }
+        
+        if (!isValidFileType(file)) {
+            e.preventDefault();
+            showFileError('Invalid file format. Only JPG, JPEG, and PNG are allowed.');
+            return;
+        }
+    });
 });
 </script>
 
