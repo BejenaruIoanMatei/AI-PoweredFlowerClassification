@@ -1,4 +1,5 @@
 {%load static%}
+{%load flower_extras %}
 <!DOCTYPE html>
 
 <html>
@@ -390,6 +391,25 @@
         color: #333;
       }
 
+      /* Îmbunătățiri pentru secțiunea de sfaturi speciale */
+      .special-tips-section .care-tips {
+        background: #fff3e0;
+        border-left: 3px solid #FF9800;
+      }
+
+      .special-tips-list li {
+        color: #555;
+        margin-bottom: 0.7rem;
+        position: relative;
+        padding-left: 1rem;
+      }
+
+      .special-tips-list li::before {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
       @keyframes modalSlideIn {
         from {
           opacity: 0;
@@ -465,7 +485,7 @@
               <a class="nav-item nav-link" href="{%url 'activity-feed'%}">Activity</a>
               <a class="nav-item nav-link" href="{%url 'blog-about'%}">About</a>
             </div>
-            <!-- Navbar Right Side -->
+            <!-- navbar right side -->
             <div class="navbar-nav">
                 {%if user.is_authenticated%}
                     <a class="nav-item nav-link" href="{%url 'user-garden' user.username%}">My Garden</a>
@@ -494,13 +514,13 @@
               {%endfor%}
           {%endif%}
 
-          <!-- HERO SECTION -->
+          <!-- hero section -->
           <div class="garden-hero">
             <h1>Virtual Garden</h1>
             <p>Discover, learn, and care for beautiful flowers with our community</p>
           </div>
 
-          <!-- TAB NAVIGATION -->
+          <!-- tab nav -->
           <div class="garden-tabs">
             <button class="tab-btn active" onclick="showTab('all')">All Flowers</button>
             <button class="tab-btn" onclick="showTab('unlocked')">My Collection</button>
@@ -508,7 +528,7 @@
             <button class="tab-btn" onclick="showTab('community')">Community</button>
           </div>
 
-          <!-- ALL FLOWERS TAB -->
+          <!-- all flowers tab -->
           <div id="all-tab" class="tab-content">
             <div class="flowers-grid">
               {% for gf in garden_flowers %}
@@ -530,18 +550,20 @@
                   <div class="flower-name">{{ gf.flower.name }}</div>
                   
                   <div class="flower-difficulty" title="Care Difficulty">
-                    <div class="difficulty-dot filled"></div>
-                    <div class="difficulty-dot filled"></div>
-                    <div class="difficulty-dot {% if gf.flower.name == 'Rose' %}filled{% endif %}"></div>
-                    <div class="difficulty-dot"></div>
-                    <div class="difficulty-dot"></div>
+                    {% with difficulty=gf.flower.name|get_difficulty %}
+                      <div class="difficulty-dot {% if difficulty >= 1 %}filled{% endif %}"></div>
+                      <div class="difficulty-dot {% if difficulty >= 2 %}filled{% endif %}"></div>
+                      <div class="difficulty-dot {% if difficulty >= 3 %}filled{% endif %}"></div>
+                      <div class="difficulty-dot {% if difficulty >= 4 %}filled{% endif %}"></div>
+                      <div class="difficulty-dot {% if difficulty >= 5 %}filled{% endif %}"></div>
+                    {% endwith %}
                   </div>
                   
                   {% if gf.unlocked %}
                     <div class="flower-actions">
                       <button class="btn-care-guide" 
-                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
-                        Care Guide
+                          onclick="showPersonalizedCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                          Care Guide
                       </button>
                     </div>
                   {% else %}
@@ -556,7 +578,7 @@
             </div>
           </div>
 
-          <!-- MY COLLECTION TAB -->
+          <!-- my collection tab -->
           <div id="unlocked-tab" class="tab-content" style="display: none;">
             <div class="flowers-grid">
               {% for gf in garden_flowers %}
@@ -584,8 +606,8 @@
                     
                     <div class="flower-actions">
                       <button class="btn-care-guide" 
-                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
-                        Care Guide
+                          onclick="showPersonalizedCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                          Care Guide
                       </button>
                     </div>
                   </div>
@@ -594,7 +616,7 @@
             </div>
           </div>
 
-          <!-- CARE GUIDE TAB -->
+          <!-- care guide tab -->
           <div id="care-tab" class="tab-content" style="display: none;">
             <div class="care-tips">
               <h5 style="color: #2e7d32; margin-bottom: 1rem;">General Plant Care Tips</h5>
@@ -621,8 +643,8 @@
                     <div class="flower-name">{{ gf.flower.name }}</div>
                     <div class="flower-actions">
                       <button class="btn-care-guide" 
-                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
-                        Detailed Care
+                          onclick="showPersonalizedCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                          Detailed Care
                       </button>
                     </div>
                   </div>
@@ -631,7 +653,7 @@
             </div>
           </div>
 
-          <!-- COMMUNITY TAB -->
+          <!-- community tab -->
           <div id="community-tab" class="tab-content" style="display: none;">
             <div class="community-stats">
               <h5 style="color: #2e7d32; margin-bottom: 1rem;">Community Statistics</h5>
@@ -679,15 +701,11 @@
                     />
                   </div>
                   <div class="flower-name">{{ gf.flower.name }}</div>
-                  <div class="community-rating">
-                    <div class="rating-stars">★★★★☆</div>
-                    <div class="rating-text">Community Rating: 4.2/5</div>
-                  </div>
                   {% if gf.unlocked %}
                     <div class="flower-actions">
                       <button class="btn-care-guide" 
-                              onclick="showCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
-                        View Details
+                          onclick="showPersonalizedCareModal('{{ gf.flower.name }}', '{{ gf.flower.description|escapejs }}', '{% get_media_prefix %}{{ gf.flower.icon_path }}')">
+                          View Details
                       </button>
                     </div>
                   {% endif %}
@@ -697,7 +715,7 @@
           </div>
         </div>
 
-        <!-- SIDEBAR -->
+        <!-- sidebar -->
         <div class="col-md-4">
           <div class="garden-sidebar">
             <h3 class="sidebar-title">Quick Stats</h3>
@@ -756,7 +774,7 @@
       </div>
     </main>
 
-    <!-- CARE MODAL -->
+    <!-- care modal -->
     <div class="modal fade care-modal" id="careModal" tabindex="-1" role="dialog" aria-labelledby="careModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -795,7 +813,7 @@
                 <ul>
                   <li><strong>Watering:</strong> Water when top inch of soil feels dry</li>
                   <li><strong>Light:</strong> Bright, indirect sunlight for 6-8 hours daily</li>
-                  <li><strong>Temperature:</strong> Keep between 65-75°F (18-24°C)</li>
+                  <li><strong>Temperature:</strong> Keep between (18-24°C)</li>
                   <li><strong>Humidity:</strong> Moderate humidity, 40-60%</li>
                   <li><strong>Fertilizing:</strong> Monthly during growing season</li>
                 </ul>
@@ -836,14 +854,6 @@
         }
       }
 
-      function showCareModal(name, description, image) {
-        document.getElementById('modalFlowerName').textContent = name;
-        document.getElementById('modalFlowerDescription').innerHTML = description;
-        document.getElementById('modalFlowerImage').src = image;
-        
-        $('#careModal').modal('show');
-      }
-
       document.addEventListener('DOMContentLoaded', function() {
         const observerOptions = {
           threshold: 0.1,
@@ -869,6 +879,300 @@
           observer.observe(card);
         });
       });
+    </script>
+
+    <script>
+      const flowerCareGuide = {
+        'Black Eyed Susan': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Drought tolerant. Deep water weekly during dry spells.',
+          light: 'Full sun preferred. Tolerates partial shade.',
+          temperature: '(21-29°C). Very heat tolerant.',
+          humidity: 'Low to moderate. Extremely adaptable.',
+          fertilizing: 'Minimal feeding needed. Too much reduces flowering.',
+          specialTips: [
+            'Native wildflower - very low maintenance',
+            'Attracts butterflies and beneficial insects',
+            'Leave seed heads for birds in winter',
+            'Spreads naturally to form colonies'
+          ]
+        },
+      
+        'Calendula': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Moderate watering. Drought tolerant once established.',
+          light: 'Full sun to partial shade. Cooler conditions extend blooming.',
+          temperature: '(15-21°C). Cool weather flower.',
+          humidity: 'Low to moderate humidity. Good air circulation.',
+          fertilizing: 'Light feeding monthly. Over-fertilizing reduces flowers.',
+          specialTips: [
+            'Direct seed in garden for best results',
+            'Edible flowers - great for salads',
+            'Self-seeds readily for next year',
+            'Blooms best in cool weather'
+          ]
+        },
+      
+        'California Poppy': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Very drought tolerant. Water sparingly once established.',
+          light: 'Full sun required. Will not bloom in shade.',
+          temperature: '(18-24°C). Heat and drought tolerant.',
+          humidity: 'Low humidity preferred. Excellent drainage essential.',
+          fertilizing: 'No fertilizer needed. Poor soil actually preferred.',
+          specialTips: [
+            'Native California wildflower - extremely low maintenance',
+            'Direct seed only - does not transplant well',
+            'Closes flowers in cloudy weather',
+            'Self-seeds prolifically for next year'
+          ]
+        },
+      
+        'Carnation': {
+          difficulty: 2,
+          difficultyText: 'Medium',
+          watering: 'Water at soil level to avoid wetting foliage.',
+          light: 'Full sun with some afternoon shade in hot climates.',
+          temperature: '(18-24°C). Cool nights preferred.',
+          humidity: 'Low to moderate humidity. Avoid overhead watering.',
+          fertilizing: 'Balanced fertilizer every 2-3 weeks during growing season.',
+          specialTips: [
+            'Pinch young plants to encourage bushiness',
+            'Support tall varieties with stakes',
+            'Remove spent blooms to prolong flowering',
+            'Good drainage essential for healthy roots'
+          ]
+        },
+      
+        'Common Daisy': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Regular watering but allow soil to dry between waterings.',
+          light: 'Full sun to partial shade. Very adaptable.',
+          temperature: '(15-24°C). Cool weather preferred.',
+          humidity: 'Moderate humidity. Good air circulation.',
+          fertilizing: 'Light monthly feeding during growing season.',
+          specialTips: [
+            'Deadhead regularly for continuous blooms',
+            'Self-seeds readily in garden',
+            'Cut back after first flush for second bloom',
+            'Divide clumps every 2-3 years'
+          ]
+        },
+      
+        'Daffodil': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Water during growing season. Reduce after flowering.',
+          light: 'Full sun to partial shade. Morning sun important.',
+          temperature: '(10-18°C). Needs cold winter period.',
+          humidity: 'Moderate humidity. Good drainage essential.',
+          fertilizing: 'Apply bulb fertilizer when shoots emerge.',
+          specialTips: [
+            'Plant bulbs in fall for spring blooms',
+            'Allow foliage to die back naturally',
+            'Deer and rodent resistant',
+            'Naturalizes well in lawns and gardens'
+          ]
+        },
+      
+        'Dandelion': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Extremely drought tolerant. No watering needed.',
+          light: 'Full sun to partial shade. Grows anywhere.',
+          temperature: '(15-27°C). Very adaptable.',
+          humidity: 'Any humidity level. Extremely hardy.',
+          fertilizing: 'No fertilizer needed. Thrives in poor soil.',
+          specialTips: [
+            'Edible flowers, leaves, and roots',
+            'Attracts beneficial insects early in season',
+            'Deep taproot improves soil',
+            'Harvest young leaves for better taste'
+          ]
+        },
+      
+        'Iris': {
+          difficulty: 2,
+          difficultyText: 'Medium',
+          watering: 'Regular watering during growing season. Reduce in winter.',
+          light: 'Full sun to partial shade. At least 6 hours direct sun.',
+          temperature: '(18-24°C). Most varieties are cold hardy.',
+          humidity: 'Moderate humidity. Good air circulation important.',
+          fertilizing: 'Balanced fertilizer in early spring and after blooming.',
+          specialTips: [
+            'Plant rhizomes at soil surface level',
+            'Divide clumps every 3-4 years',
+            'Remove spent blooms but leave foliage',
+            'Excellent for cut flowers'
+          ]
+        },
+      
+        'Lavender': {
+          difficulty: 2,
+          difficultyText: 'Medium',
+          watering: 'Drought tolerant. Water deeply but infrequently.',
+          light: 'Full sun required. Minimum 6-8 hours daily.',
+          temperature: '(18-24°C). Heat tolerant, cold varies by variety.',
+          humidity: 'Low humidity preferred. Excellent drainage essential.',
+          fertilizing: 'Light feeding once yearly. Avoid nitrogen-rich fertilizers.',
+          specialTips: [
+            'Prune after flowering to maintain shape',
+            'Excellent for drying and aromatherapy',
+            'Attracts bees and butterflies',
+            'Mediterranean herbs - loves poor, rocky soil'
+          ]
+        },
+      
+        'Orchid': {
+          difficulty: 4,
+          difficultyText: 'Hard',
+          watering: 'Water with ice cubes or sparingly once weekly.',
+          light: 'Bright, indirect light. No direct sunlight.',
+          temperature: '(18-27°C). Consistent temperature important.',
+          humidity: 'High humidity 50-70%. Use humidity tray.',
+          fertilizing: 'Orchid-specific fertilizer monthly at quarter strength.',
+          specialTips: [
+            'Use orchid bark mix, never regular potting soil',
+            'Repot every 1-2 years with fresh bark',
+            'Allow air circulation around roots',
+            'Be patient - blooms can last several months'
+          ]
+        },
+      
+        'Rose': {
+          difficulty: 3,
+          difficultyText: 'Medium-Hard',
+          watering: 'Water deeply 2-3 times per week at soil level.',
+          light: 'Full sun for 6-8 hours daily. Morning sun essential.',
+          temperature: '(18-24°C) during day, cooler at night.',
+          humidity: 'Moderate humidity 40-50%. Good air circulation prevents disease.',
+          fertilizing: 'Feed with rose fertilizer every 4-6 weeks during season.',
+          specialTips: [
+            'Prune in late winter or early spring',
+            'Mulch around base to retain moisture',
+            'Watch for aphids and black spot disease',
+            'Deadhead spent blooms for more flowers'
+          ]
+        },
+      
+        'Sunflower': {
+          difficulty: 1,
+          difficultyText: 'Very Easy',
+          watering: 'Deep watering 1-2 times weekly. Drought tolerant once established.',
+          light: 'Full sun all day. Flowers follow the sun.',
+          temperature: '(21-26°C) ideal. Very heat tolerant.',
+          humidity: 'Low humidity preferred. Very tolerant of dry conditions.',
+          fertilizing: 'Light feeding monthly. Too much nitrogen reduces flowering.',
+          specialTips: [
+            'Direct seed in garden - do not transplant well',
+            'Support tall varieties with stakes',
+            'Harvest seeds when back of flower turns brown',
+            'Attracts beneficial insects and birds'
+          ]
+        },
+      
+        'Tulip': {
+          difficulty: 2,
+          difficultyText: 'Easy-Medium',
+          watering: 'Water moderately during growing season. Reduce after flowering.',
+          light: 'Full sun to partial shade. At least 4-6 hours direct sunlight.',
+          temperature: '(15-21°C) optimal. Needs cold winter period.',
+          humidity: 'Low to moderate humidity. Good drainage essential.',
+          fertilizing: 'Apply balanced fertilizer when shoots emerge in spring.',
+          specialTips: [
+            'Plant bulbs in fall for spring blooms',
+            'Allow foliage to die back naturally',
+            'Excellent drainage prevents bulb rot',
+            'Can be left in ground in most climates'
+          ]
+        }
+      };
+      
+      function showPersonalizedCareModal(flowerName, description, image) {
+        const careData = flowerCareGuide[flowerName] || getDefaultCareData();
+        
+        document.getElementById('modalFlowerName').textContent = flowerName;
+        document.getElementById('modalFlowerDescription').innerHTML = description;
+        document.getElementById('modalFlowerImage').src = image;
+        
+        updateDifficultyIndicator(careData.difficulty, careData.difficultyText);
+        
+        updateCareInstructions(careData);
+        
+        updateSpecialTips(careData.specialTips);
+        
+        $('#careModal').modal('show');
+      }
+      
+      function updateDifficultyIndicator(difficulty, difficultyText) {
+        const dots = document.querySelectorAll('#careModal .difficulty-dot');
+        const difficultyLabel = document.querySelector('#careModal .difficulty-indicator span:last-child');
+        
+        dots.forEach(dot => dot.classList.remove('filled'));
+        
+        for (let i = 0; i < Math.min(difficulty, dots.length); i++) {
+          dots[i].classList.add('filled');
+        }
+        
+        if (difficultyLabel) {
+          difficultyLabel.textContent = difficultyText;
+        }
+      }
+      function updateCareInstructions(careData) {
+        const careList = document.querySelector('#careModal .care-tips ul');
+        if (careList) {
+          careList.innerHTML = `
+            <li><strong>Watering:</strong> ${careData.watering}</li>
+            <li><strong>Light:</strong> ${careData.light}</li>
+            <li><strong>Temperature:</strong> ${careData.temperature}</li>
+            <li><strong>Humidity:</strong> ${careData.humidity}</li>
+            <li><strong>Fertilizing:</strong> ${careData.fertilizing}</li>
+          `;
+        }
+      }
+      
+      function updateSpecialTips(specialTips) {
+        let specialSection = document.querySelector('#careModal .special-tips-section');
+        
+        if (!specialSection) {
+          specialSection = document.createElement('div');
+          specialSection.className = 'care-section special-tips-section';
+          specialSection.innerHTML = '<h6>Special Care Tips</h6><div class="care-tips"><ul class="special-tips-list"></ul></div>';
+          
+          const modalBody = document.querySelector('#careModal .modal-body');
+          modalBody.appendChild(specialSection);
+        }
+        
+        const tipsList = specialSection.querySelector('.special-tips-list');
+        if (tipsList && specialTips) {
+          tipsList.innerHTML = specialTips.map(tip => `<li>${tip}</li>`).join('');
+          specialSection.style.display = 'block';
+        } else if (tipsList) {
+          specialSection.style.display = 'none';
+        }
+      }
+      
+      function getDefaultCareData() {
+        return {
+          difficulty: 2,
+          difficultyText: 'Medium',
+          watering: 'Water when top inch of soil feels dry',
+          light: 'Bright, indirect sunlight for 6-8 hours daily',
+          temperature: 'Keep between (18-24°C)',
+          humidity: 'Moderate humidity, 40-60%',
+          fertilizing: 'Monthly during growing season',
+          specialTips: [
+            'Monitor plant regularly for signs of stress',
+            'Adjust care based on seasonal changes',
+            'Provide good drainage',
+            'Remove dead or diseased parts promptly'
+          ]
+        };
+      }
     </script>
   </body>
 </html>
