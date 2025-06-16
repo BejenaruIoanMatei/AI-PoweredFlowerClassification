@@ -190,8 +190,7 @@
       box-shadow: inset 0 4px 12px rgba(76, 175, 80, 0.1), 0 0 20px rgba(76, 175, 80, 0.3);
     }
 
-    /* RESPONSIVE PLANTED FLOWERS */
-    .planted-flower {
+    .planted-flower-free {
       position: absolute;
       width: 80px; /* Default desktop size */
       height: 80px;
@@ -206,15 +205,15 @@
       touch-action: none;
     }
     
-    .planted-flower:hover {
+    .planted-flower-free:hover {
       transform: scale(1.1);
       border-color: #FFD700;
       box-shadow: 0 8px 20px rgba(255,215,0,0.4);
       z-index: 20;
     }
     
-    .planted-flower:active,
-    .planted-flower.dragging {
+    .planted-flower-free:active,
+    .planted-flower-free.dragging {
       cursor: grabbing;
       transform: scale(1.2) rotate(5deg);
       z-index: 30;
@@ -374,7 +373,7 @@
       }
 
       /* Adjust flower size for mobile */
-      .planted-flower {
+      .planted-flower-free {
         width: 60px;
         height: 60px;
       }
@@ -415,7 +414,7 @@
         height: 280px;
       }
 
-      .planted-flower {
+      .planted-flower-free {
         width: 50px;
         height: 50px;
       }
@@ -573,6 +572,9 @@
       const removeZone = document.getElementById('removeZone');
       const plantedCountEl = document.getElementById('plantedCount');
 
+      // Reference dimensions for scaling (desktop as base)
+      const REFERENCE_DIMENSIONS = { width: 800, height: 600, flowerSize: 80 };
+
       // Get current canvas dimensions
       function getCanvasDimensions() {
         const screenWidth = window.innerWidth;
@@ -596,6 +598,14 @@
         };
       }
 
+      // Convert relative percentages to absolute positions
+      function percentageToPosition(xPercent, yPercent, dimensions) {
+        const x = (xPercent / 100) * (dimensions.width - dimensions.flowerSize);
+        const y = (yPercent / 100) * (dimensions.height - dimensions.flowerSize);
+        return { x: Math.max(0, Math.min(x, dimensions.width - dimensions.flowerSize)), 
+                 y: Math.max(0, Math.min(y, dimensions.height - dimensions.flowerSize)) };
+      }
+
       function loadExistingFlowers() {
         {% for slot in slots %}
           {% if slot.flower %}
@@ -605,7 +615,7 @@
               name: '{{ slot.flower.name }}'
             }, 
             {{ slot.pos_x|default:"Math.random() * (gardenCanvas.offsetWidth - 80)" }}, 
-            {{ slot.pos_y|default:"Math.random() * (300)" }}, 
+            {{ slot.pos_y|default:"Math.random() * (gardenCanvas.offsetHeight - 80)" }}, 
             {{ slot.slot_index }});
           {% endif %}
           
@@ -661,7 +671,7 @@
           return;
         }
         
-        if (e.target.classList.contains('planted-flower') ||
+        if (e.target.classList.contains('planted-flower-free') ||
             e.target.classList.contains('garden-guide') ||
             e.target.classList.contains('garden-stats') ||
             e.target.classList.contains('remove-zone')) {
@@ -673,12 +683,12 @@
 
         const coords = getEventCoordinates(e);
         const rect = gardenCanvas.getBoundingClientRect();
-        const dimensions = getCanvasDimensions();
-        const x = coords.clientX - rect.left - (dimensions.flowerSize / 2);
-        const y = coords.clientY - rect.top - (dimensions.flowerSize / 2);
+        const flowerSize = window.innerWidth <= 480 ? 50 : (window.innerWidth <= 768 ? 60 : 80);
+        const x = coords.clientX - rect.left - (flowerSize / 2);
+        const y = coords.clientY - rect.top - (flowerSize / 2);
 
-        const maxX = dimensions.width - dimensions.flowerSize;
-        const maxY = dimensions.height - dimensions.flowerSize;
+        const maxX = gardenCanvas.offsetWidth - flowerSize;
+        const maxY = gardenCanvas.offsetHeight - flowerSize;
         const finalX = Math.max(0, Math.min(x, maxX));
         const finalY = Math.max(0, Math.min(y, maxY));
 
@@ -705,7 +715,7 @@
         
         const flowerEl = document.createElement('img');
         flowerEl.src = flowerData.icon;
-        flowerEl.className = 'planted-flower'; // Single class for all devices
+        flowerEl.className = 'planted-flower-free';
         flowerEl.alt = flowerData.name;
         flowerEl.title = flowerData.name;
         flowerEl.style.left = x + 'px';
@@ -723,8 +733,8 @@
         const posYInput = document.getElementById('pos-y-' + slotIndex);
         
         if (slotInput) slotInput.value = flowerData.id;
-        if (posXInput) posXInput.value = x;
-        if (posYInput) posYInput.value = y;
+        if (posXInput) posXInput.value = Math.round(x);
+        if (posYInput) posYInput.value = Math.round(y);
 
         plantedFlowers.push({
           element: flowerEl,
@@ -733,6 +743,18 @@
         });
         
         console.log('Flower created successfully');
+      }
+
+      // Update position inputs with current screen values
+      function updateFlowerPositionInputs(flowerEl, x, y) {
+        const slotIndex = flowerEl.dataset.slotIndex;
+        const slotInput = document.getElementById('slot-' + slotIndex);
+        const posXInput = document.getElementById('pos-x-' + slotIndex);
+        const posYInput = document.getElementById('pos-y-' + slotIndex);
+        
+        if (slotInput) slotInput.value = flowerEl.dataset.flowerId;
+        if (posXInput) posXInput.value = Math.round(x);
+        if (posYInput) posYInput.value = Math.round(y);
       }
 
       function makeDraggable(element) {
@@ -799,12 +821,15 @@
           const newLeft = startLeft + dx;
           const newTop = startTop + dy;
 
-          const dimensions = getCanvasDimensions();
-          const maxX = dimensions.width - dimensions.flowerSize;
-          const maxY = dimensions.height - dimensions.flowerSize;
+          const flowerSize = window.innerWidth <= 480 ? 50 : (window.innerWidth <= 768 ? 60 : 80);
+          const maxX = gardenCanvas.offsetWidth - flowerSize;
+          const maxY = gardenCanvas.offsetHeight - flowerSize;
           
-          element.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
-          element.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+          const finalX = Math.max(0, Math.min(newLeft, maxX));
+          const finalY = Math.max(0, Math.min(newTop, maxY));
+          
+          element.style.left = finalX + 'px';
+          element.style.top = finalY + 'px';
         }
 
         function endDrag(e) {
@@ -926,12 +951,10 @@
         plantedCountEl.textContent = plantedFlowers.length;
       }
 
-      // Adjust flowers on resize to keep them within canvas bounds
-      function adjustFlowersOnResize() {
-        const plantedFlowerElements = document.querySelectorAll('.planted-flower');
-        const dimensions = getCanvasDimensions();
-        const maxX = dimensions.width - dimensions.flowerSize;
-        const maxY = dimensions.height - dimensions.flowerSize;
+      // Scale all flowers to new dimensions maintaining relative positions
+      function scaleFlowersToNewDimensions() {
+        const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
+        const newDimensions = getCanvasDimensions();
         
         let adjustedCount = 0;
         
@@ -939,33 +962,41 @@
           const currentX = parseInt(flower.style.left);
           const currentY = parseInt(flower.style.top);
           
-          let newX = Math.max(0, Math.min(currentX, maxX));
-          let newY = Math.max(0, Math.min(currentY, maxY));
+          // Convert current position to percentage of reference dimensions
+          const xPercent = (currentX / (REFERENCE_DIMENSIONS.width - REFERENCE_DIMENSIONS.flowerSize)) * 100;
+          const yPercent = (currentY / (REFERENCE_DIMENSIONS.height - REFERENCE_DIMENSIONS.flowerSize)) * 100;
           
-          if (currentX !== newX || currentY !== newY) {
-            flower.style.left = newX + 'px';
-            flower.style.top = newY + 'px';
+          // Convert percentage to new absolute position
+          const newPos = percentageToPosition(xPercent, yPercent, newDimensions);
+          
+          if (Math.abs(currentX - newPos.x) > 1 || Math.abs(currentY - newPos.y) > 1) {
+            flower.style.left = newPos.x + 'px';
+            flower.style.top = newPos.y + 'px';
             
-            const slotIndex = flower.dataset.slotIndex;
-            document.getElementById('pos-x-' + slotIndex).value = newX;
-            document.getElementById('pos-y-' + slotIndex).value = newY;
+            updateFlowerPositionInputs(flower, newPos.x, newPos.y);
             adjustedCount++;
           }
         });
         
         if (adjustedCount > 0) {
-          console.log(`Adjusted ${adjustedCount} flowers to fit in resized canvas`);
+          console.log(`Scaled ${adjustedCount} flowers to new dimensions`);
         }
       }
 
       // Add validation to form submission
       document.getElementById('garden-form').addEventListener('submit', function(e) {
-        adjustFlowersOnResize(); // Ensure all flowers are in bounds before saving
+        // Update all positions before saving
+        const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
+        plantedFlowerElements.forEach(flower => {
+          const currentX = parseInt(flower.style.left);
+          const currentY = parseInt(flower.style.top);
+          updateFlowerPositionInputs(flower, currentX, currentY);
+        });
       });
 
       document.getElementById('clearGarden')?.addEventListener('click', function() {
         if (confirm('Are you sure you want to clear your entire garden?')) {
-          const plantedFlowerElements = document.querySelectorAll('.planted-flower');
+          const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
           plantedFlowerElements.forEach(flower => {
             removeFlower(flower);
           });
@@ -988,12 +1019,12 @@
         }
       });
 
-      // Handle window resize - adjust flowers to stay in bounds
+      // Handle window resize - scale flowers proportionally
       let resizeTimeout;
       window.addEventListener('resize', function() {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(function() {
-          adjustFlowersOnResize();
+          scaleFlowersToNewDimensions();
         }, 100); // Debounce resize events
       });
 
