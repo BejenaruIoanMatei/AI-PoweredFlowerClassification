@@ -1,20 +1,176 @@
-{%extends "blog/base.html"%} {%load crispy_forms_tags%} {%block content%}
+{%extends "blog/base.html"%} 
+{%load crispy_forms_tags%} 
+{%block content%}
+<style>
+.content-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  margin-bottom: 2rem;
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.account-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 1.5rem;
+}
+
+.account-heading {
+  color: #2e7d32;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.profile-email {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+.form-legend {
+  color: #2e7d32;
+  font-weight: 500;
+  font-size: 1.3rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #4CAF50;
+  margin-bottom: 1.5rem;
+}
+
+.btn-update {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.btn-update:hover {
+  background: linear-gradient(135deg, #66BB6A, #81C784);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  color: white;
+}
+
+@media (max-width: 767.98px) {
+  .content-section {
+    padding: 1.25rem;
+    margin: 0 -15px;
+    border-radius: 0;
+  }
+  
+  .profile-header .media {
+    flex-direction: column !important;
+    text-align: center;
+  }
+  
+  .account-img {
+    width: 80px;
+    height: 80px;
+    margin-right: 0 !important;
+    margin-bottom: 1rem;
+    align-self: center;
+  }
+  
+  .media-body {
+    text-align: center;
+  }
+  
+  .account-heading {
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .profile-email {
+    font-size: 0.9rem;
+  }
+  
+  .form-legend {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  
+  .btn-update {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .content-section {
+    padding: 1.75rem;
+  }
+  
+  .account-img {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .account-heading {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-section {
+    padding: 1rem;
+  }
+  
+  .profile-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  
+  .account-img {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .account-heading {
+    font-size: 1.25rem;
+  }
+  
+  .profile-email {
+    font-size: 0.85rem;
+  }
+  
+  .form-legend {
+    font-size: 1rem;
+  }
+}
+</style>
+
 <div class="content-section">
-  <div class="media">
-    <img class="rounded-circle account-img" src="{{user.profile.image.url}}" />
-    <div class="media-body">
-      <h2 class="account-heading">{{user.username}}</h2>
-      <p class="text-secondary">{{user.email}}</p>
+  <div class="profile-header">
+    <div class="media">
+      <img class="rounded-circle account-img" src="{{user.profile.image.url}}" />
+      <div class="media-body">
+        <h2 class="account-heading">{{user.username}}</h2>
+        <p class="profile-email">{{user.email}}</p>
+      </div>
     </div>
   </div>
+  
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <fieldset class="form-group">
-      <legend class="border-bottom mb-4">Profile Info</legend>
-      {{ u_form|crispy }} {{ p_form|crispy }}
+      <legend class="form-legend">Profile Info</legend>
+      {{ u_form|crispy }} 
+      {{ p_form|crispy }}
     </fieldset>
     <div class="form-group">
-      <button class="btn btn-outline-info" type="submit">Update</button>
+      <button class="btn btn-update" type="submit">Update</button>
     </div>
   </form>
 </div>
