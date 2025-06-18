@@ -556,483 +556,495 @@
     </div>
   </main>
 
-  <!-- Scripts -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      let selectedFlower = null;
-      let plantedFlowers = [];
-      let draggedFlower = null;
-      let nextSlotIndex = 0;
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 
-      const gardenCanvas = document.getElementById('gardenCanvas');
-      const removeZone = document.getElementById('removeZone');
-      const plantedCountEl = document.getElementById('plantedCount');
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let selectedFlower = null;
+    let plantedFlowers = [];
+    let draggedFlower = null;
+    let nextSlotIndex = 0;
 
-      // Reference dimensions for scaling (desktop as base)
-      const REFERENCE_DIMENSIONS = { width: 800, height: 600, flowerSize: 80 };
+    const gardenCanvas = document.getElementById('gardenCanvas');
+    const removeZone = document.getElementById('removeZone');
+    const plantedCountEl = document.getElementById('plantedCount');
 
-      // Get current canvas dimensions
-      function getCanvasDimensions() {
-        const screenWidth = window.innerWidth;
-        let canvasHeight, flowerSize;
-        
-        if (screenWidth <= 480) {
-          canvasHeight = 280;
-          flowerSize = 50;
-        } else if (screenWidth <= 768) {
-          canvasHeight = 350;
-          flowerSize = 60;
-        } else {
-          canvasHeight = 600;
-          flowerSize = 80;
-        }
-        
-        return {
-          width: gardenCanvas.offsetWidth,
-          height: canvasHeight,
-          flowerSize: flowerSize
-        };
+    function getCanvasDimensions() {
+      const screenWidth = window.innerWidth;
+      let canvasHeight, flowerSize;
+      
+      if (screenWidth <= 480) {
+        canvasHeight = 280;
+        flowerSize = 50;
+      } else if (screenWidth <= 768) {
+        canvasHeight = 350;
+        flowerSize = 60;
+      } else {
+        canvasHeight = 600;
+        flowerSize = 80;
       }
+      
+      return {
+        width: gardenCanvas.offsetWidth,
+        height: canvasHeight,
+        flowerSize: flowerSize
+      };
+    }
 
-      // Convert relative percentages to absolute positions
-      function percentageToPosition(xPercent, yPercent, dimensions) {
-        const x = (xPercent / 100) * (dimensions.width - dimensions.flowerSize);
-        const y = (yPercent / 100) * (dimensions.height - dimensions.flowerSize);
-        return { x: Math.max(0, Math.min(x, dimensions.width - dimensions.flowerSize)), 
-                 y: Math.max(0, Math.min(y, dimensions.height - dimensions.flowerSize)) };
-      }
+    function percentageToPixels(xPercent, yPercent) {
+      const dimensions = getCanvasDimensions();
+      const maxX = dimensions.width - dimensions.flowerSize;
+      const maxY = dimensions.height - dimensions.flowerSize;
+      
+      const x = Math.max(0, Math.min((xPercent / 100) * maxX, maxX));
+      const y = Math.max(0, Math.min((yPercent / 100) * maxY, maxY));
+      
+      return { x, y };
+    }
 
-      function loadExistingFlowers() {
-        {% for slot in slots %}
-          {% if slot.flower %}
+    function pixelsToPercentage(x, y) {
+      const dimensions = getCanvasDimensions();
+      const maxX = dimensions.width - dimensions.flowerSize;
+      const maxY = dimensions.height - dimensions.flowerSize;
+      
+      const xPercent = maxX > 0 ? (x / maxX) * 100 : 0;
+      const yPercent = maxY > 0 ? (y / maxY) * 100 : 0;
+      
+      return { 
+        xPercent: Math.max(0, Math.min(xPercent, 100)), 
+        yPercent: Math.max(0, Math.min(yPercent, 100)) 
+      };
+    }
+
+    function updateFlowerPositionInputs(flowerEl, x, y) {
+      const slotIndex = flowerEl.dataset.slotIndex;
+      const slotInput = document.getElementById('slot-' + slotIndex);
+      const posXInput = document.getElementById('pos-x-' + slotIndex);
+      const posYInput = document.getElementById('pos-y-' + slotIndex);
+      
+      const percentages = pixelsToPercentage(x, y);
+      
+      if (slotInput) slotInput.value = flowerEl.dataset.flowerId;
+      if (posXInput) posXInput.value = percentages.xPercent.toFixed(2);
+      if (posYInput) posYInput.value = percentages.yPercent.toFixed(2);
+      
+      console.log(`Floare ${flowerEl.dataset.flowerName}: px(${x}, ${y}) -> %(${percentages.xPercent.toFixed(2)}, ${percentages.yPercent.toFixed(2)})`);
+    }
+
+    function loadExistingFlowers() {
+      {% for slot in slots %}
+        {% if slot.flower %}
+          var posX_{{ slot.slot_index }} = {{ slot.pos_x|default:"null" }};
+          var posY_{{ slot.slot_index }} = {{ slot.pos_y|default:"null" }};
+          
+          if (posX_{{ slot.slot_index }} !== null && posY_{{ slot.slot_index }} !== null) {
+            var finalX, finalY;
+            
+            if (posX_{{ slot.slot_index }} <= 100 && posY_{{ slot.slot_index }} <= 100) {
+              const pos = percentageToPixels(posX_{{ slot.slot_index }}, posY_{{ slot.slot_index }});
+              finalX = pos.x;
+              finalY = pos.y;
+              console.log(`Încărcare din procente: ${posX_{{ slot.slot_index }}}%, ${posY_{{ slot.slot_index }}}% -> ${finalX}px, ${finalY}px`);
+            } else {
+              const dimensions = getCanvasDimensions();
+              
+              const originalMaxX = 800 - 80;
+              const originalMaxY = 600 - 80;
+              
+              const xPercent = (posX_{{ slot.slot_index }} / originalMaxX) * 100;
+              const yPercent = (posY_{{ slot.slot_index }} / originalMaxY) * 100;
+              
+              const pos = percentageToPixels(xPercent, yPercent);
+              finalX = pos.x;
+              finalY = pos.y;
+              console.log(`Migrare din pixeli: ${posX_{{ slot.slot_index }}}px, ${posY_{{ slot.slot_index }}}px -> ${xPercent.toFixed(2)}%, ${yPercent.toFixed(2)}% -> ${finalX}px, ${finalY}px`);
+            }
+            
             createPlantedFlower({
               id: '{{ slot.flower.id }}',
               icon: '{% get_media_prefix %}{{ slot.flower.icon_path }}',
               name: '{{ slot.flower.name }}'
-            }, 
-            {{ slot.pos_x|default:"Math.random() * (gardenCanvas.offsetWidth - 80)" }}, 
-            {{ slot.pos_y|default:"Math.random() * (gardenCanvas.offsetHeight - 80)" }}, 
-            {{ slot.slot_index }});
-          {% endif %}
-          
-          if ({{ slot.slot_index }} >= nextSlotIndex) {
-            nextSlotIndex = {{ slot.slot_index }} + 1;
+            }, finalX, finalY, {{ slot.slot_index }});
           }
-        {% endfor %}
+        {% endif %}
         
-        updatePlantedCount();
+        if ({{ slot.slot_index }} >= nextSlotIndex) {
+          nextSlotIndex = {{ slot.slot_index }} + 1;
+        }
+      {% endfor %}
+      
+      updatePlantedCount();
+    }
+    document.querySelectorAll('.flower-selectable').forEach(plant => {
+      plant.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Flower clicked:', this.dataset.flowerName);
+        
+        document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
+        
+        this.classList.add('selected');
+        selectedFlower = {
+          id: this.dataset.flowerId,
+          icon: this.dataset.iconPath,
+          name: this.dataset.flowerName,
+          element: this
+        };
+
+        console.log('Selected flower:', selectedFlower);
+        gardenCanvas.classList.add('can-plant');
+      });
+    });
+    function getEventCoordinates(e) {
+      if (e.touches && e.touches.length > 0) {
+        return {
+          clientX: e.touches[0].clientX,
+          clientY: e.touches[0].clientY
+        };
+      } else {
+        return {
+          clientX: e.clientX,
+          clientY: e.clientY
+        };
+      }
+    }
+
+    function handleCanvasInteraction(e) {
+      e.preventDefault();
+      console.log('Canvas clicked/touched, selectedFlower:', selectedFlower);
+      
+      if (!selectedFlower) {
+        console.log('No flower selected');
+        return;
+      }
+      
+      if (e.target.classList.contains('planted-flower-free') ||
+          e.target.classList.contains('garden-guide') ||
+          e.target.classList.contains('garden-stats') ||
+          e.target.classList.contains('remove-zone')) {
+        console.log('Clicked on UI element, ignoring');
+        return;
       }
 
-      document.querySelectorAll('.flower-selectable').forEach(plant => {
-        plant.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('Flower clicked:', this.dataset.flowerName);
-          
-          document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
-          
-          this.classList.add('selected');
-          selectedFlower = {
-            id: this.dataset.flowerId,
-            icon: this.dataset.iconPath,
-            name: this.dataset.flowerName,
-            element: this
-          };
+      console.log('Planting flower...');
 
-          console.log('Selected flower:', selectedFlower);
-          gardenCanvas.classList.add('can-plant');
+      const coords = getEventCoordinates(e);
+      const rect = gardenCanvas.getBoundingClientRect();
+      const dimensions = getCanvasDimensions();
+      
+      const x = coords.clientX - rect.left - (dimensions.flowerSize / 2);
+      const y = coords.clientY - rect.top - (dimensions.flowerSize / 2);
+
+      const maxX = dimensions.width - dimensions.flowerSize;
+      const maxY = dimensions.height - dimensions.flowerSize;
+      const finalX = Math.max(0, Math.min(x, maxX));
+      const finalY = Math.max(0, Math.min(y, maxY));
+
+      console.log('Planting at position:', finalX, finalY);
+
+      const slotIndex = getNextAvailableSlot();
+      createPlantedFlower(selectedFlower, finalX, finalY, slotIndex);
+
+      selectedFlower.element.remove();
+
+      selectedFlower = null;
+      document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
+      gardenCanvas.classList.remove('can-plant');
+
+      updatePlantedCount();
+    }
+
+    gardenCanvas.addEventListener('click', handleCanvasInteraction);
+    gardenCanvas.addEventListener('touchstart', handleCanvasInteraction);
+
+    function createPlantedFlower(flowerData, x, y, slotIndex) {
+      console.log('Creating planted flower:', flowerData.name, 'at slot:', slotIndex);
+      
+      const flowerEl = document.createElement('img');
+      flowerEl.src = flowerData.icon;
+      flowerEl.className = 'planted-flower-free';
+      flowerEl.alt = flowerData.name;
+      flowerEl.title = flowerData.name;
+      flowerEl.style.left = x + 'px';
+      flowerEl.style.top = y + 'px';
+      flowerEl.dataset.flowerId = flowerData.id;
+      flowerEl.dataset.slotIndex = slotIndex;
+      flowerEl.dataset.flowerName = flowerData.name;
+
+      makeDraggable(flowerEl);
+
+      gardenCanvas.appendChild(flowerEl);
+
+      updateFlowerPositionInputs(flowerEl, x, y);
+
+      plantedFlowers.push({
+        element: flowerEl,
+        flowerId: flowerData.id,
+        slotIndex: slotIndex
+      });
+      
+      console.log('Flower created successfully');
+    }
+
+    function makeDraggable(element) {
+      let isDragging = false;
+      let startX, startY, startLeft, startTop;
+      const isTouchDevice = 'ontouchstart' in window;
+
+      if (isTouchDevice) {
+        element.addEventListener('touchstart', startDrag, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', endDrag, { passive: false });
+        
+        let touchTime = 0;
+        element.addEventListener('touchstart', function(e) {
+          if (isDragging) return;
+          
+          if (touchTime === 0) {
+            touchTime = new Date().getTime();
+          } else {
+            if (((new Date().getTime()) - touchTime) < 300) {
+              e.preventDefault();
+              removeFlower(element);
+              touchTime = 0;
+            } else {
+              touchTime = new Date().getTime();
+            }
+          }
         });
+      }
+      
+      element.addEventListener('mousedown', startDrag);
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', endDrag);
+      element.addEventListener('dblclick', function() {
+        removeFlower(element);
       });
 
-      // Handle both mouse and touch events for canvas
-      function getEventCoordinates(e) {
-        if (e.touches && e.touches.length > 0) {
-          return {
-            clientX: e.touches[0].clientX,
-            clientY: e.touches[0].clientY
-          };
-        } else {
-          return {
-            clientX: e.clientX,
-            clientY: e.clientY
-          };
-        }
+      function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        draggedFlower = element;
+        element.classList.add('dragging');
+        
+        const coords = getEventCoordinates(e);
+        startX = coords.clientX;
+        startY = coords.clientY;
+        startLeft = parseInt(element.style.left) || 0;
+        startTop = parseInt(element.style.top) || 0;
+
+        removeZone.classList.add('active');
       }
 
-      function handleCanvasInteraction(e) {
+      function drag(e) {
+        if (!isDragging || draggedFlower !== element) return;
         e.preventDefault();
-        console.log('Canvas clicked/touched, selectedFlower:', selectedFlower);
-        
-        if (!selectedFlower) {
-          console.log('No flower selected');
-          return;
-        }
-        
-        if (e.target.classList.contains('planted-flower-free') ||
-            e.target.classList.contains('garden-guide') ||
-            e.target.classList.contains('garden-stats') ||
-            e.target.classList.contains('remove-zone')) {
-          console.log('Clicked on UI element, ignoring');
-          return;
-        }
-
-        console.log('Planting flower...');
 
         const coords = getEventCoordinates(e);
-        const rect = gardenCanvas.getBoundingClientRect();
-        const flowerSize = window.innerWidth <= 480 ? 50 : (window.innerWidth <= 768 ? 60 : 80);
-        const x = coords.clientX - rect.left - (flowerSize / 2);
-        const y = coords.clientY - rect.top - (flowerSize / 2);
+        const dx = coords.clientX - startX;
+        const dy = coords.clientY - startY;
+        
+        const newLeft = startLeft + dx;
+        const newTop = startTop + dy;
 
-        const maxX = gardenCanvas.offsetWidth - flowerSize;
-        const maxY = gardenCanvas.offsetHeight - flowerSize;
-        const finalX = Math.max(0, Math.min(x, maxX));
-        const finalY = Math.max(0, Math.min(y, maxY));
-
-        console.log('Planting at position:', finalX, finalY);
-
-        const slotIndex = getNextAvailableSlot();
-        createPlantedFlower(selectedFlower, finalX, finalY, slotIndex);
-
-        selectedFlower.element.remove();
-
-        selectedFlower = null;
-        document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
-        gardenCanvas.classList.remove('can-plant');
-
-        updatePlantedCount();
+        const dimensions = getCanvasDimensions();
+        const maxX = dimensions.width - dimensions.flowerSize;
+        const maxY = dimensions.height - dimensions.flowerSize;
+        
+        const finalX = Math.max(0, Math.min(newLeft, maxX));
+        const finalY = Math.max(0, Math.min(newTop, maxY));
+        
+        element.style.left = finalX + 'px';
+        element.style.top = finalY + 'px';
       }
 
-      // Add both click and touch events
-      gardenCanvas.addEventListener('click', handleCanvasInteraction);
-      gardenCanvas.addEventListener('touchstart', handleCanvasInteraction);
+      function endDrag(e) {
+        if (!isDragging || draggedFlower !== element) return;
+        e.preventDefault();
 
-      function createPlantedFlower(flowerData, x, y, slotIndex) {
-        console.log('Creating planted flower:', flowerData.name, 'at slot:', slotIndex);
+        isDragging = false;
+        element.classList.remove('dragging');
+        removeZone.classList.remove('active');
+
+        const coords = getEventCoordinates(e);
+        const removeRect = removeZone.getBoundingClientRect();
         
-        const flowerEl = document.createElement('img');
-        flowerEl.src = flowerData.icon;
-        flowerEl.className = 'planted-flower-free';
-        flowerEl.alt = flowerData.name;
-        flowerEl.title = flowerData.name;
-        flowerEl.style.left = x + 'px';
-        flowerEl.style.top = y + 'px';
-        flowerEl.dataset.flowerId = flowerData.id;
-        flowerEl.dataset.slotIndex = slotIndex;
-        flowerEl.dataset.flowerName = flowerData.name;
-
-        makeDraggable(flowerEl);
-
-        gardenCanvas.appendChild(flowerEl);
-
-        const slotInput = document.getElementById('slot-' + slotIndex);
-        const posXInput = document.getElementById('pos-x-' + slotIndex);
-        const posYInput = document.getElementById('pos-y-' + slotIndex);
-        
-        if (slotInput) slotInput.value = flowerData.id;
-        if (posXInput) posXInput.value = Math.round(x);
-        if (posYInput) posYInput.value = Math.round(y);
-
-        plantedFlowers.push({
-          element: flowerEl,
-          flowerId: flowerData.id,
-          slotIndex: slotIndex
-        });
-        
-        console.log('Flower created successfully');
-      }
-
-      // Update position inputs with current screen values
-      function updateFlowerPositionInputs(flowerEl, x, y) {
-        const slotIndex = flowerEl.dataset.slotIndex;
-        const slotInput = document.getElementById('slot-' + slotIndex);
-        const posXInput = document.getElementById('pos-x-' + slotIndex);
-        const posYInput = document.getElementById('pos-y-' + slotIndex);
-        
-        if (slotInput) slotInput.value = flowerEl.dataset.flowerId;
-        if (posXInput) posXInput.value = Math.round(x);
-        if (posYInput) posYInput.value = Math.round(y);
-      }
-
-      function makeDraggable(element) {
-        let isDragging = false;
-        let startX, startY, startLeft, startTop;
-        const isTouchDevice = 'ontouchstart' in window;
-
-        // Universal event listeners that work for both mouse and touch
-        if (isTouchDevice) {
-          element.addEventListener('touchstart', startDrag, { passive: false });
-          document.addEventListener('touchmove', drag, { passive: false });
-          document.addEventListener('touchend', endDrag, { passive: false });
+        if (coords.clientX >= removeRect.left && 
+            coords.clientX <= removeRect.right && 
+            coords.clientY >= removeRect.top && 
+            coords.clientY <= removeRect.bottom) {
           
-          // Double tap for removal
-          let touchTime = 0;
-          element.addEventListener('touchstart', function(e) {
-            if (isDragging) return;
-            
-            if (touchTime === 0) {
-              touchTime = new Date().getTime();
-            } else {
-              if (((new Date().getTime()) - touchTime) < 300) {
-                e.preventDefault();
-                removeFlower(element);
-                touchTime = 0;
-              } else {
-                touchTime = new Date().getTime();
-              }
-            }
-          });
-        }
-        
-        // Mouse events (always available)
-        element.addEventListener('mousedown', startDrag);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', endDrag);
-        element.addEventListener('dblclick', function() {
           removeFlower(element);
-        });
-
-        function startDrag(e) {
-          e.preventDefault();
-          isDragging = true;
-          draggedFlower = element;
-          element.classList.add('dragging');
-          
-          const coords = getEventCoordinates(e);
-          startX = coords.clientX;
-          startY = coords.clientY;
-          startLeft = parseInt(element.style.left) || 0;
-          startTop = parseInt(element.style.top) || 0;
-
-          removeZone.classList.add('active');
+        } else {
+          const finalX = parseInt(element.style.left);
+          const finalY = parseInt(element.style.top);
+          updateFlowerPositionInputs(element, finalX, finalY);
         }
 
-        function drag(e) {
-          if (!isDragging || draggedFlower !== element) return;
-          e.preventDefault();
+        draggedFlower = null;
+      }
+    }
 
-          const coords = getEventCoordinates(e);
-          const dx = coords.clientX - startX;
-          const dy = coords.clientY - startY;
-          
-          const newLeft = startLeft + dx;
-          const newTop = startTop + dy;
+    function removeFlower(flowerElement) {
+      console.log('Removing flower');
+      
+      const slotIndex = flowerElement.dataset.slotIndex;
+      const flowerId = flowerElement.dataset.flowerId;
+      const flowerName = flowerElement.dataset.flowerName || flowerElement.alt;
+      const flowerIcon = flowerElement.src;
 
-          const flowerSize = window.innerWidth <= 480 ? 50 : (window.innerWidth <= 768 ? 60 : 80);
-          const maxX = gardenCanvas.offsetWidth - flowerSize;
-          const maxY = gardenCanvas.offsetHeight - flowerSize;
-          
-          const finalX = Math.max(0, Math.min(newLeft, maxX));
-          const finalY = Math.max(0, Math.min(newTop, maxY));
-          
-          element.style.left = finalX + 'px';
-          element.style.top = finalY + 'px';
-        }
+      const existingFlower = document.querySelector(`[data-flower-id="${flowerId}"].flower-selectable`);
+      if (!existingFlower) {
+        const unlockedContainer = document.getElementById('unlocked-flowers');
+        if (unlockedContainer) {
+          const flowerItem = document.createElement('div');
+          flowerItem.className = 'flower-item flower-selectable';
+          flowerItem.dataset.flowerId = flowerId;
+          flowerItem.dataset.iconPath = flowerIcon;
+          flowerItem.dataset.flowerName = flowerName;
+          flowerItem.style.display = 'block';
 
-        function endDrag(e) {
-          if (!isDragging || draggedFlower !== element) return;
-          e.preventDefault();
+          const img = document.createElement('img');
+          img.src = flowerIcon;
+          img.className = 'flower-image';
+          img.alt = flowerName;
 
-          isDragging = false;
-          element.classList.remove('dragging');
-          removeZone.classList.remove('active');
+          const nameP = document.createElement('p');
+          nameP.className = 'flower-name';
+          nameP.textContent = flowerName;
 
-          const coords = getEventCoordinates(e);
-          const removeRect = removeZone.getBoundingClientRect();
-          
-          if (coords.clientX >= removeRect.left && 
-              coords.clientX <= removeRect.right && 
-              coords.clientY >= removeRect.top && 
-              coords.clientY <= removeRect.bottom) {
+          flowerItem.appendChild(img);
+          flowerItem.appendChild(nameP);
+
+          flowerItem.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
             
-            removeFlower(element);
-          } else {
-            const slotIndex = element.dataset.slotIndex;
-            document.getElementById('pos-x-' + slotIndex).value = parseInt(element.style.left);
-            document.getElementById('pos-y-' + slotIndex).value = parseInt(element.style.top);
-          }
+            this.classList.add('selected');
+            selectedFlower = {
+              id: this.dataset.flowerId,
+              icon: this.dataset.iconPath,
+              name: this.dataset.flowerName,
+              element: this
+            };
 
-          draggedFlower = null;
+            gardenCanvas.classList.add('can-plant');
+          });
+
+          unlockedContainer.appendChild(flowerItem);
+          console.log('Recreated flower in selector:', flowerName);
         }
+      } else {
+        console.log('Flower already exists in selector, just showing it');
+        existingFlower.style.display = 'block';
       }
 
-      function removeFlower(flowerElement) {
-        console.log('Removing flower');
-        
-        const slotIndex = flowerElement.dataset.slotIndex;
-        const flowerId = flowerElement.dataset.flowerId;
-        const flowerName = flowerElement.dataset.flowerName || flowerElement.alt;
-        const flowerIcon = flowerElement.src;
+      flowerElement.remove();
 
-        const existingFlower = document.querySelector(`[data-flower-id="${flowerId}"].flower-selectable`);
-        if (!existingFlower) {
-          const unlockedContainer = document.getElementById('unlocked-flowers');
-          if (unlockedContainer) {
-            const flowerItem = document.createElement('div');
-            flowerItem.className = 'flower-item flower-selectable';
-            flowerItem.dataset.flowerId = flowerId;
-            flowerItem.dataset.iconPath = flowerIcon;
-            flowerItem.dataset.flowerName = flowerName;
-            flowerItem.style.display = 'block';
+      const slotInput = document.getElementById('slot-' + slotIndex);
+      const posXInput = document.getElementById('pos-x-' + slotIndex);
+      const posYInput = document.getElementById('pos-y-' + slotIndex);
+      
+      if (slotInput) slotInput.value = '';
+      if (posXInput) posXInput.value = '';
+      if (posYInput) posYInput.value = '';
 
-            const img = document.createElement('img');
-            img.src = flowerIcon;
-            img.className = 'flower-image';
-            img.alt = flowerName;
+      plantedFlowers = plantedFlowers.filter(f => f.slotIndex != slotIndex);
+      
+      updatePlantedCount();
+      console.log('Flower removed successfully');
+    }
 
-            const nameP = document.createElement('p');
-            nameP.className = 'flower-name';
-            nameP.textContent = flowerName;
-
-            flowerItem.appendChild(img);
-            flowerItem.appendChild(nameP);
-
-            flowerItem.addEventListener('click', function(e) {
-              e.preventDefault();
-              document.querySelectorAll('.flower-selectable').forEach(p => p.classList.remove('selected'));
-              
-              this.classList.add('selected');
-              selectedFlower = {
-                id: this.dataset.flowerId,
-                icon: this.dataset.iconPath,
-                name: this.dataset.flowerName,
-                element: this
-              };
-
-              gardenCanvas.classList.add('can-plant');
-            });
-
-            unlockedContainer.appendChild(flowerItem);
-            console.log('Recreated flower in selector:', flowerName);
-          }
-        } else {
-          console.log('Flower already exists in selector, just showing it');
-          existingFlower.style.display = 'block';
-        }
-
-        flowerElement.remove();
-
-        const slotInput = document.getElementById('slot-' + slotIndex);
+    function handleResize() {
+      const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
+      
+      plantedFlowerElements.forEach(flower => {
+        const slotIndex = flower.dataset.slotIndex;
         const posXInput = document.getElementById('pos-x-' + slotIndex);
         const posYInput = document.getElementById('pos-y-' + slotIndex);
         
-        if (slotInput) slotInput.value = '';
-        if (posXInput) posXInput.value = '';
-        if (posYInput) posYInput.value = '';
-
-        plantedFlowers = plantedFlowers.filter(f => f.slotIndex != slotIndex);
-        
-        updatePlantedCount();
-        console.log('Flower removed successfully');
-      }
-
-      function getNextAvailableSlot() {
-        for (let i = nextSlotIndex; i < 18; i++) {
-          const input = document.getElementById('slot-' + i);
-          if (input && input.value === '') {
-            return i;
-          }
-        }
-        
-        for (let i = 0; i < nextSlotIndex; i++) {
-          const input = document.getElementById('slot-' + i);
-          if (input && input.value === '') {
-            return i;
-          }
-        }
-        
-        return 0;
-      }
-
-      function updatePlantedCount() {
-        plantedCountEl.textContent = plantedFlowers.length;
-      }
-
-      // Scale all flowers to new dimensions maintaining relative positions
-      function scaleFlowersToNewDimensions() {
-        const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
-        const newDimensions = getCanvasDimensions();
-        
-        let adjustedCount = 0;
-        
-        plantedFlowerElements.forEach(flower => {
-          const currentX = parseInt(flower.style.left);
-          const currentY = parseInt(flower.style.top);
+        if (posXInput && posYInput && posXInput.value && posYInput.value) {
+          const xPercent = parseFloat(posXInput.value);
+          const yPercent = parseFloat(posYInput.value);
           
-          // Convert current position to percentage of reference dimensions
-          const xPercent = (currentX / (REFERENCE_DIMENSIONS.width - REFERENCE_DIMENSIONS.flowerSize)) * 100;
-          const yPercent = (currentY / (REFERENCE_DIMENSIONS.height - REFERENCE_DIMENSIONS.flowerSize)) * 100;
+          const newPos = percentageToPixels(xPercent, yPercent);
           
-          // Convert percentage to new absolute position
-          const newPos = percentageToPosition(xPercent, yPercent, newDimensions);
-          
-          if (Math.abs(currentX - newPos.x) > 1 || Math.abs(currentY - newPos.y) > 1) {
-            flower.style.left = newPos.x + 'px';
-            flower.style.top = newPos.y + 'px';
-            
-            updateFlowerPositionInputs(flower, newPos.x, newPos.y);
-            adjustedCount++;
-          }
-        });
-        
-        if (adjustedCount > 0) {
-          console.log(`Scaled ${adjustedCount} flowers to new dimensions`);
+          flower.style.left = newPos.x + 'px';
+          flower.style.top = newPos.y + 'px';
+        }
+      });
+      
+      console.log(`Redimensionat: ${plantedFlowerElements.length} flori repoziționare`);
+    }
+
+    function getNextAvailableSlot() {
+      for (let i = nextSlotIndex; i < 18; i++) {
+        const input = document.getElementById('slot-' + i);
+        if (input && input.value === '') {
+          return i;
         }
       }
-
-      // Add validation to form submission
-      document.getElementById('garden-form').addEventListener('submit', function(e) {
-        // Update all positions before saving
-        const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
-        plantedFlowerElements.forEach(flower => {
-          const currentX = parseInt(flower.style.left);
-          const currentY = parseInt(flower.style.top);
-          updateFlowerPositionInputs(flower, currentX, currentY);
-        });
-      });
-
-      document.getElementById('clearGarden')?.addEventListener('click', function() {
-        if (confirm('Are you sure you want to clear your entire garden?')) {
-          const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
-          plantedFlowerElements.forEach(flower => {
-            removeFlower(flower);
-          });
-
-          if (selectedFlower) {
-            selectedFlower.element.classList.remove('selected');
-            selectedFlower = null;
-            gardenCanvas.classList.remove('can-plant');
-          }
+      
+      for (let i = 0; i < nextSlotIndex; i++) {
+        const input = document.getElementById('slot-' + i);
+        if (input && input.value === '') {
+          return i;
         }
-      });
+      }
+      
+      return 0;
+    }
 
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          if (selectedFlower) {
-            selectedFlower.element.classList.remove('selected');
-            selectedFlower = null;
-            gardenCanvas.classList.remove('can-plant');
-          }
-        }
-      });
+    function updatePlantedCount() {
+      plantedCountEl.textContent = plantedFlowers.length;
+    }
 
-      // Handle window resize - scale flowers proportionally
-      let resizeTimeout;
-      window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-          scaleFlowersToNewDimensions();
-        }, 100); // Debounce resize events
+    document.getElementById('garden-form').addEventListener('submit', function(e) {
+      const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
+      plantedFlowerElements.forEach(flower => {
+        const currentX = parseInt(flower.style.left);
+        const currentY = parseInt(flower.style.top);
+        updateFlowerPositionInputs(flower, currentX, currentY);
       });
-
-      // Initialize everything
-      loadExistingFlowers();      
-      console.log('Found flower elements:', document.querySelectorAll('.flower-selectable').length);
-      console.log('Garden canvas element:', gardenCanvas);
     });
-  </script>
+
+    document.getElementById('clearGarden')?.addEventListener('click', function() {
+      if (confirm('Ești sigur că vrei să ștergi întreaga grădină?')) {
+        const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
+        plantedFlowerElements.forEach(flower => {
+          removeFlower(flower);
+        });
+
+        if (selectedFlower) {
+          selectedFlower.element.classList.remove('selected');
+          selectedFlower = null;
+          gardenCanvas.classList.remove('can-plant');
+        }
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (selectedFlower) {
+          selectedFlower.element.classList.remove('selected');
+          selectedFlower = null;
+          gardenCanvas.classList.remove('can-plant');
+        }
+      }
+    });
+
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(handleResize, 150);
+    });
+    loadExistingFlowers();      
+    console.log('Garden virtual cu poziționare responsivă inițializat');
+    console.log('Found flower elements:', document.querySelectorAll('.flower-selectable').length);
+    console.log('Garden canvas element:', gardenCanvas);
+  });
+</script>
 </body>
 </html>

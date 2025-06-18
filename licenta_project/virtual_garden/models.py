@@ -35,8 +35,8 @@ class GardenSlot(models.Model):
     flower = models.ForeignKey(Flower, null=True, blank=True, on_delete=models.SET_NULL)
     unlocked = models.BooleanField(default=False)
     
-    pos_x = models.IntegerField(null=True, blank=True)
-    pos_y = models.IntegerField(null=True, blank=True)
+    pos_x = models.FloatField(null=True, blank=True, help_text="Pozitia X ca procent")
+    pos_y = models.FloatField(null=True, blank=True, help_text="Pozitia Y ca procent")
     
     class Meta:
         unique_together = ('garden','slot_index')
