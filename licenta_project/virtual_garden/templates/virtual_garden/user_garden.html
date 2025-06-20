@@ -521,13 +521,12 @@
           <form method="POST" id="garden-form">
             {% csrf_token %}
             
-            <!-- SINGLE RESPONSIVE CANVAS -->
             <div class="garden-canvas" id="gardenCanvas">
               <div class="garden-guide">
                 Click to plant selected flowers anywhere!
               </div>
               <div class="garden-stats">
-                <span id="plantedCount">0</span> / 18 planted
+                <span id="plantedCount">0</span> / 13 planted
               </div>
               <div class="remove-zone" id="removeZone">
                 Drop here to remove
@@ -631,7 +630,7 @@
       if (posXInput) posXInput.value = percentages.xPercent.toFixed(2);
       if (posYInput) posYInput.value = percentages.yPercent.toFixed(2);
       
-      console.log(`Floare ${flowerEl.dataset.flowerName}: px(${x}, ${y}) -> %(${percentages.xPercent.toFixed(2)}, ${percentages.yPercent.toFixed(2)})`);
+      console.log(`Flower ${flowerEl.dataset.flowerName}: px(${x}, ${y}) -> %(${percentages.xPercent.toFixed(2)}, ${percentages.yPercent.toFixed(2)})`);
     }
 
     function loadExistingFlowers() {
@@ -647,7 +646,7 @@
               const pos = percentageToPixels(posX_{{ slot.slot_index }}, posY_{{ slot.slot_index }});
               finalX = pos.x;
               finalY = pos.y;
-              console.log(`Încărcare din procente: ${posX_{{ slot.slot_index }}}%, ${posY_{{ slot.slot_index }}}% -> ${finalX}px, ${finalY}px`);
+              console.log(`Loading: ${posX_{{ slot.slot_index }}}%, ${posY_{{ slot.slot_index }}}% -> ${finalX}px, ${finalY}px`);
             } else {
               const dimensions = getCanvasDimensions();
               
@@ -660,7 +659,7 @@
               const pos = percentageToPixels(xPercent, yPercent);
               finalX = pos.x;
               finalY = pos.y;
-              console.log(`Migrare din pixeli: ${posX_{{ slot.slot_index }}}px, ${posY_{{ slot.slot_index }}}px -> ${xPercent.toFixed(2)}%, ${yPercent.toFixed(2)}% -> ${finalX}px, ${finalY}px`);
+              console.log(`Migrate from pixels: ${posX_{{ slot.slot_index }}}px, ${posY_{{ slot.slot_index }}}px -> ${xPercent.toFixed(2)}%, ${yPercent.toFixed(2)}% -> ${finalX}px, ${finalY}px`);
             }
             
             createPlantedFlower({
@@ -976,7 +975,7 @@
         }
       });
       
-      console.log(`Redimensionat: ${plantedFlowerElements.length} flori repoziționare`);
+      console.log(`Resized: ${plantedFlowerElements.length} flowers`);
     }
 
     function getNextAvailableSlot() {
@@ -1011,7 +1010,7 @@
     });
 
     document.getElementById('clearGarden')?.addEventListener('click', function() {
-      if (confirm('Ești sigur că vrei să ștergi întreaga grădină?')) {
+      if (confirm('Are you sure?')) {
         const plantedFlowerElements = document.querySelectorAll('.planted-flower-free');
         plantedFlowerElements.forEach(flower => {
           removeFlower(flower);
@@ -1041,7 +1040,6 @@
       resizeTimeout = setTimeout(handleResize, 150);
     });
     loadExistingFlowers();      
-    console.log('Garden virtual cu poziționare responsivă inițializat');
     console.log('Found flower elements:', document.querySelectorAll('.flower-selectable').length);
     console.log('Garden canvas element:', gardenCanvas);
   });

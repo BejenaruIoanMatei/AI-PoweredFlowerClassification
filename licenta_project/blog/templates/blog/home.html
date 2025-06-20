@@ -2,7 +2,6 @@
 
 {% block content %}
 <style>
-/* Modern Pagination Styles */
 .pagination-container {
   margin: 3rem 0 2rem 0;
   display: flex;
@@ -90,7 +89,6 @@
 }
 
 @media (max-width: 767.98px) {
-  /* Pe mobile, facem cardurile verticale */
   .post-list .card .row {
     flex-direction: column !important;
   }
@@ -134,7 +132,6 @@
     height: 32px !important;
   }
 }
-
 @media (min-width: 768px) and (max-width: 991.98px) {
   .post-list .card .col-md-4 img {
     height: 180px !important;
@@ -149,13 +146,11 @@
     font-size: 0.95rem !important;
   }
 }
-
 @media (max-width: 767.98px) {
   .post-list .card:not(:has(.col-md-4)) .card-body {
     padding: 1.25rem !important;
   }
 }
-
 @media (max-width: 768px) {
   .pagination-modern {
     padding: 0.8rem 1rem;
@@ -163,13 +158,11 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  
   .pagination-modern .page-link {
     padding: 8px 10px;
     font-size: 0.8rem;
     min-width: 35px;
   }
-  
   .page-info {
     padding: 6px 12px;
     font-size: 0.75rem;
@@ -179,20 +172,16 @@
     margin: 0 0 0.5rem 0;
   }
 }
-
 @media (max-width: 480px) {
   .pagination-modern {
     padding: 0.6rem;
     gap: 0.2rem;
   }
-  
   .pagination-modern .page-link {
     padding: 6px 8px;
     font-size: 0.75rem;
     min-width: 30px;
   }
-  
-  /* Hide text, show only icons on very small screens */
   .pagination-text {
     display: none;
   }

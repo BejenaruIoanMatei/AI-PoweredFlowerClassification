@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-/* Plant-themed classifier styles */
 .classifier-container {
     background: linear-gradient(135deg, #4CAF50 0%, #fffdaf 100%);
     border-radius: 20px;
@@ -46,7 +45,6 @@
     font-size: 1.1rem;
 }
 
-/* ERROR ALERT STYLES */
 .error-alert {
     background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
     color: white;
@@ -76,7 +74,6 @@
     75% { transform: translateX(5px); }
 }
 
-/* MODERN UPLOAD AREA */
 .upload-area {
     background: rgba(255,255,255,0.95);
     border-radius: 20px;
@@ -294,8 +291,6 @@
     transform: none;
     box-shadow: none;
 }
-
-/* RESULTS SECTION */
 .result-card {
     background: white;
     border-radius: 20px;
@@ -405,8 +400,6 @@
     box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
     color: white;
 }
-
-/* MODERN MODAL STYLES */
 .modal-backdrop {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(8px);
@@ -616,8 +609,6 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-/* Mobile responsiveness */
 @media (max-width: 768px) {
     .classifier-container {
         margin: 1rem;
@@ -666,9 +657,7 @@
 <div class="classifier-container">
   <h1 class="classifier-title">Plant Classifier</h1>
   <p class="classifier-subtitle">Upload a photo and discover the beauty of nature through AI</p>
-  
-  <!-- Error Messages Display -->
-  {% if messages %}
+    {% if messages %}
     {% for message in messages %}
       <div class="alert error-alert alert-dismissible fade show" role="alert">
         <strong>Error:</strong> {{ message }}
@@ -679,7 +668,6 @@
     {% endfor %}
   {% endif %}
 
-  <!-- Form Errors Display -->
   {% if form.image.errors %}
     <div class="alert error-alert alert-dismissible fade show" role="alert">
       <strong>File Error:</strong> 
@@ -710,7 +698,6 @@
             <div class="file-input-custom" id="fileInputCustom">
               <span class="file-input-text" id="fileInputText">Choose image file</span>
               <span class="file-input-button">Browse</span>
-              <!-- Updated accept attribute to only allow JPG, JPEG, PNG -->
               <input type="file" 
                      name="image" 
                      id="id_image"
@@ -720,7 +707,6 @@
           </div>
           
           <div class="upload-formats">
-            <!-- Updated supported formats text -->
             Supported formats: JPG, JPEG, PNG only (max 10MB)
           </div>
           
@@ -829,7 +815,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewImg = document.getElementById('previewImg');
     const analyzeBtn = document.getElementById('analyzeBtn');
 
-    // Valid file types - updated to match server validation
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     const validExtensions = ['.jpg', '.jpeg', '.png'];
 
@@ -896,12 +881,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function isValidFileType(file) {
-        // Check MIME type
         if (!validTypes.includes(file.type)) {
             return false;
         }
-        
-        // Check file extension
         const fileName = file.name.toLowerCase();
         const hasValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
         
@@ -909,18 +891,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showFileError(message) {
-        // Remove error state first
         uploadArea.classList.remove('error-state');
         fileInputCustom.classList.remove('error');
         
-        // Add error state with animation
         setTimeout(() => {
             uploadArea.classList.add('error-state');
             fileInputCustom.classList.add('error');
             fileInputText.textContent = message;
         }, 100);
         
-        // Reset after 3 seconds
         setTimeout(() => {
             resetUploadArea();
         }, 3000);
@@ -932,22 +911,18 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Validate file type
         if (!isValidFileType(file)) {
             showFileError('Invalid format. Only JPG, JPEG, and PNG files are allowed.');
-            // Clear the file input
             fileInput.value = '';
             return;
         }
 
-        // Validate file size (10MB limit)
         if (file.size > 10 * 1024 * 1024) {
             showFileError('File size must be less than 10MB.');
             fileInput.value = '';
             return;
         }
 
-        // File is valid
         fileInputText.textContent = file.name;
         fileInputCustom.classList.remove('error');
         fileInputCustom.classList.add('has-file');

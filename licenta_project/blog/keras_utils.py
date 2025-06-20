@@ -20,7 +20,7 @@ def warm_up_model():
     
 def classify_image(img_path):
     try:
-        print(f"Clasific imaginea: {img_path}")
+        print(f"Classifying image: {img_path}")
         img = image.load_img(img_path, target_size=(260, 260))
         
         img_array = image.img_to_array(img)

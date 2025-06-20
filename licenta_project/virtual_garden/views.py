@@ -33,8 +33,8 @@ class VirtualGardenView(LoginRequiredMixin, TemplateView):
 
 def validate_flower_position_percentage(pos_x, pos_y):
     
-    MIN_PERCENT = 0.0
-    MAX_PERCENT = 100.0
+    MIN_PERCENT = 5.0
+    MAX_PERCENT = 95.0
     
     pos_x_valid = max(MIN_PERCENT, min(float(pos_x), MAX_PERCENT))
     pos_y_valid = max(MIN_PERCENT, min(float(pos_y), MAX_PERCENT))
@@ -49,12 +49,12 @@ def convert_pixels_to_percentage(pixel_pos, is_x_axis=True):
     
     if is_x_axis:
         max_pos = REFERENCE_WIDTH - FLOWER_SIZE
-        percentage = (pixel_pos / max_pos) * 100 if max_pos > 0 else 0
+        percentage = (pixel_pos / max_pos) * 100 if max_pos > 0 else 50
     else:
         max_pos = REFERENCE_HEIGHT - FLOWER_SIZE
-        percentage = (pixel_pos / max_pos) * 100 if max_pos > 0 else 0
+        percentage = (pixel_pos / max_pos) * 100 if max_pos > 0 else 50
     
-    return max(0, min(percentage, 100))
+    return max(5, min(percentage, 95))
 
 @login_required  
 def user_garden_view(request, username):
@@ -101,7 +101,7 @@ def user_garden_view(request, username):
                     ).first()
                     
                     if not garden_flower:
-                        validation_errors.append(f"Floarea '{flower.name}' nu este deblocată!")
+                        validation_errors.append(f"Flower '{flower.name}' is locked")
                         continue
                     
                     slot.flower = flower
@@ -120,7 +120,7 @@ def user_garden_view(request, username):
                                     pos_x_percent, pos_y_percent
                                 )
                                 
-                                print(f"Migrat floarea '{flower.name}': "
+                                print(f"Migrated flower '{flower.name}': "
                                       f"({pos_x_original}px, {pos_y_original}px) -> "
                                       f"({pos_x_valid}%, {pos_y_valid}%)")
                                 
@@ -132,28 +132,28 @@ def user_garden_view(request, username):
                                 if abs(pos_x_original - pos_x_valid) > 0.01 or abs(pos_y_original - pos_y_valid) > 0.01:
                                     corrected_positions += 1
                                     validation_errors.append(
-                                        f"Poziția florii '{flower.name}' a fost corectată "
-                                        f"din ({pos_x_original:.2f}%, {pos_y_original:.2f}%) "
-                                        f"în ({pos_x_valid}%, {pos_y_valid}%) (valori extreme)"
+                                        f"Pos '{flower.name}': its ok now "
+                                        f"from ({pos_x_original:.2f}%, {pos_y_original:.2f}%) "
+                                        f"to ({pos_x_valid}%, {pos_y_valid}%) (extreme values)"
                                     )
                             
                             slot.pos_x = pos_x_valid
                             slot.pos_y = pos_y_valid
                             
                         except (ValueError, TypeError) as e:
-                            print(f"Eroare la procesarea pozițiilor pentru {flower.name}: {e}")
+                            print(f"Error processing pos for {flower.name}: {e}")
                             slot.pos_x = 5.0
                             slot.pos_y = 5.0
                             validation_errors.append(
-                                f"Poziții invalide pentru floarea '{flower.name}'. "
-                                f"Floarea a fost plasată în colțul canvas-ului."
+                                f"Invalid pos for '{flower.name}'. "
+                                f"Flower placed in the corner"
                             )
                     else:
                         slot.pos_x = 5.0
                         slot.pos_y = 5.0
                                         
                 except Flower.DoesNotExist:
-                    validation_errors.append(f"Floarea cu ID {flower_id} nu există!")
+                    validation_errors.append(f"Flower with ID {flower_id} doesnt exist")
                     slot.flower = None
                     slot.pos_x = None
                     slot.pos_y = None
@@ -167,19 +167,18 @@ def user_garden_view(request, username):
         if migrated_positions > 0:
             messages.info(
                 request, 
-                f"Grădina a fost salvată! {migrated_positions} poziții au fost migrate "
-                f"automat la noul sistem responsiv."
+                f"Saved Garden, {migrated_positions} positions have been migrated"
             )
         elif validation_errors:
             if corrected_positions > 0:
                 messages.warning(
                     request, 
-                    f"Grădina a fost salvată, dar {corrected_positions} poziții extreme au fost corectate."
+                    f"Saved Garden, {corrected_positions} extreme positions have been corrected"
                 )
             else:
-                messages.success(request, "Grădina a fost salvată cu succes!")
+                messages.success(request, "Successfully saved the garden")
         else:
-            messages.success(request, "Grădina a fost salvată cu succes!")
+            messages.success(request, "Successfully saved the garden")
                     
         return redirect('user-garden', username=username)
 

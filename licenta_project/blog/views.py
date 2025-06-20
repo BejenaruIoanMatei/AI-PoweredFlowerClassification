@@ -1,4 +1,3 @@
-# blog views.py
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
@@ -62,7 +61,7 @@ class ClassifierView(LoginRequiredMixin, CreateView):
                     message=f'{self.request.user.username} discovered {flower.name}'
                 )
         except Flower.DoesNotExist:
-            print(f"Floarea cu numele '{normalized}' nu a fost gasita in db.")
+            print(f"Flower '{normalized}' not in db")
 
         return response
     
@@ -71,15 +70,6 @@ class ClassifierView(LoginRequiredMixin, CreateView):
         latest = ImageClassification.objects.filter(user=self.request.user).last()
         context['classifier'] = latest
         return context
-
-# def classifier_view(request):
-#     label = None
-#     if request.method == "POST":
-#         # salvezi imaginea aici, sau doar dummy logic
-#         form = 'Ceva'
-#         label = "Cat"  # Dummy label, ulterior înlocuiești cu outputul real
-#     return render(request, 'blog/classifier.html', {'form': form, 'label': label})
-
     
 class PostListView(ListView):
     model = Post
