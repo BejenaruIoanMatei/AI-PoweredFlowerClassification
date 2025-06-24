@@ -62,7 +62,7 @@ def user_garden_view(request, username):
     garden, _ = VirtualGarden.objects.get_or_create(user=user)
 
     slots = []
-    for i in range(18):
+    for i in range(13):
         slot, _ = GardenSlot.objects.get_or_create(garden=garden, slot_index=i)
         slots.append(slot)
             

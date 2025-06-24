@@ -856,6 +856,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const confidenceBar = document.getElementById('confidenceBar');
+    const confidenceText = document.getElementById('confidenceText');
+    const modalAccuracyText = document.querySelector('.accuracy-text');
     if (confidenceBar) {
         const confidence = parseFloat(confidenceBar.getAttribute('data-confidence'));
         console.log('Confidence value:', confidence);
@@ -874,6 +876,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             setTimeout(function() {
                 confidenceBar.style.width = Math.min(confidencePercent, 100) + '%';
+                
+                if (confidenceText) {
+                    confidenceText.textContent = Math.round(confidencePercent) + '% confident';
+                }
+                
+                if (modalAccuracyText) {
+                    modalAccuracyText.textContent = 'AI Confidence: ' + Math.round(confidencePercent) + '%';
+                }
             }, 500);
         } else {
             console.log('Invalid confidence value or data not found');
