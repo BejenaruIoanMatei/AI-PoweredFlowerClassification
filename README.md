@@ -1,5 +1,5 @@
 # Florli
-### AI-Powered Plant Classification & Virtual Gardening
+### AI-Powered Flower Classification & Virtual Gardening
 
 Florli is a Django web application that combines artificial intelligence with gamified gardening. Users upload flower photos for AI classification, unlock plants in their virtual garden, and share knowledge with the community.
 
