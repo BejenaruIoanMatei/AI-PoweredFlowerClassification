@@ -48,3 +48,5 @@ python manage.py runserver
 - `users/` - User authentication and profiles
 
 > **Note:** The Model is integrated in blog/
+
+> _This project was developed as the final thesis (Bachelor’s Degree Project) at the Faculty of Computer Science, Alexandru Ioan Cuza University of Iași (2025)._
