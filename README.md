@@ -7,9 +7,9 @@ The system integrates machine learning models for plant identification and featu
 
 > **Note:** This is a university thesis project showcasing AI integration in web applications. The ML models are trained for educational purposes and may require optimization for production use.
 
-> **Watch the Demo here**: [FlorliDemo](https://drive.google.com/file/d/1KFzuKtV_-E0AcxEPMfuk2hpUUUubZXhH/view?usp=sharing)
+> **Watch the Demo here**: [FlorliDemo](https://drive.google.com/file/d/1omF0-kEJ_ijb0E_mwGIQ64045EkiNZdr/view?usp=sharing)
 
-> **Read the Documentation for the ML Module**: [ML-Module](https://drive.google.com/file/d/1WKW0vwlxxfGqIQM13FBg96eHQglUza3z/view?usp=sharing)
+> **Read the Documentation for the ML Module**: [ML-Module](https://drive.google.com/file/d/1qFReySq6UCtSBxrwk3ZkUZAWFWLYdzqn/view?usp=sharing)
 
 ### Features
 - **AI Plant Classification**: Upload flower photos and get instant identification with confidence scores
